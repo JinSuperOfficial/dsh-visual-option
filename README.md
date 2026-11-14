@@ -5,7 +5,7 @@
   
   <p><strong>让模型把 ASK-USER-QUESTION 变成看得见的东西</strong></p>
     <p>
-    <a href="https://github.com/JinSuperOfficial/dsh-visual-option"><img src="https://img.shields.io/badge/DSH_Plugin-v0.2.15-blue?style=flat-square" alt="DeepSeek Harnes Plugin" /></a>
+    <a href="https://www.npmjs.com/package/dsh-visual-option"><img src="https://img.shields.io/npm/v/dsh-visual-option?style=flat-square&color=blue" alt="npm version" /></a>
     <a href="https://github.com/JinSuperOfficial/dsh-visual-option/stargazers"><img src="https://img.shields.io/github/stars/JinSuperOfficial/dsh-visual-option?style=flat-square&color=yellow" alt="GitHub stars" /></a>
     <a href="https://github.com/JinSuperOfficial/dsh-visual-option/network/members"><img src="https://img.shields.io/github/forks/JinSuperOfficial/dsh-visual-option?style=flat-square" alt="GitHub forks" /></a>
     <a href="https://github.com/JinSuperOfficial/dsh-visual-option/blob/main/LICENSE"><img src="https://img.shields.io/github/license/JinSuperOfficial/dsh-visual-option?style=flat-square" alt="GitHub license" /></a>
