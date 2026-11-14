@@ -43,22 +43,10 @@
 ## 效果对比
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=RNSiBdt5ahw">▶ 在 YouTube 观看</a> ·
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/RNSiBdt5ahw?si=vsB3vQvL5a9WIV0i" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-  <a href="https://www.bilibili.com/video/BV1e1sG64EUi">▶ 在哔哩哔哩观看</a>
-  <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=117613602538726&bvid=BV1e1sG64EUi&cid=43593698005&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+  <!-- 注意这里用的是 src，且标签有闭合 -->
+  <video src="./demo/out/acceptance.mp4" controls width="800" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></video>
 </p>
 
-<details>
-<summary>嵌入代码（YouTube / 哔哩哔哩）</summary>
-
-````html
-<iframe width="560" height="315" src="https://www.youtube.com/embed/RNSiBdt5ahw?si=vsB3vQvL5a9WIV0i" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=117613602538726&bvid=BV1e1sG64EUi&cid=43593698005&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
-````
-
-</details>
 
 <table>
   <tr>
