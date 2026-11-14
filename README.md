@@ -43,8 +43,17 @@
 ## 效果对比
 
 <p align="center">
-  <!-- 注意这里用的是 src，且标签有闭合 -->
-  <video src="./demo/out/acceptance.mp4" controls width="800" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></video>
+  <video 
+    src="https://github.com/user-attachments/assets/2009c5a1-4410-4e32-bde2-fd922cd29fe1" 
+    controls 
+    width="100%" 
+    style="max-width: 800px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
+  ></video>
+</p>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=RNSiBdt5ahw"><b>▶ 在 YouTube 观看</b></a> &nbsp;|&nbsp;
+  <a href="https://www.bilibili.com/video/BV1e1sG64EUi"><b>▶ 在哔哩哔哩观看</b></a>
 </p>
 
 
