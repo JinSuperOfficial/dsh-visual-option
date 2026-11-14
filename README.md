@@ -26,7 +26,7 @@
     <a href="#安全与限制">安全与限制</a>
   </p>
 
-  <p>v0.2.15 · 自检 39/39 · MIT</p>
+  <p>v0.2.25 · 自检 44/44 · MIT</p>
 
   <p>
     <a href="./README.md">汉语</a> ·
@@ -158,9 +158,47 @@
 ### 宽度自适应
 预览宽度可选 `自适应 / 768 / 390`，同一份内容可以按桌面或手机宽度检查
 
+### 提示词引导
+插件会往系统提示词里加一段引导：要用户做选择时默认走 `let_user_choose` 而不是 `ask_user_question`，只有特殊场景才退回原生提问，并且凡是靠文字讲不清的（布局、配色、报错现场、数据结构、长代码差异）必须给对应选项内联一段 HTML 源码预览，而不是让用户自己想象
+
+### 转录里的提问行
+对话记录里那次调用不再是通用工具卡片，而是和原生提问同一排的一行：左边按模式给图标，右边是 `模式：主题`
+
+| 模式 | 图标 | 文案 |
+| --- | --- | --- |
+| 单选 | 圆圈里的问号 | `提问：<标题>` |
+| 多选 | 两个勾选框 + 两条横线 | `多选提问：<标题>` |
+| 确认 | 方框里的对勾 | `确认：<标题>` |
+| 填空 | 输入框 + 两条内线 | `填空：<标题>` |
+| 测验 | 两张叠放的卡片 | `测验：<标题>` |
+
+这一行在提问还挂着的时候可以点，等于把弹窗重新展开
+
+### 收起与挂起
+弹窗右上角的 `—` 把弹窗收成右下角的小胶囊（图标 + 模式 + 标题），请求仍然挂起，模型拿不到结果就不会继续输出。整颗胶囊都能点开，回到弹窗；胶囊上也有 `取消` 直接结算
+
+> 输入栏本身不会被接管：DSH 的 `conversation.composer` 是会话级 chain 槽，目前只接受内置 UI 的注册，第三方插件注册不进去，所以收起期间仍然可以打字发消息，只是模型卡在那次工具调用上不会继续说话
+
+### 顶替原生提问（实验）
+`replaceAskUserQuestion: true` 时本插件改用内置名字 `ask_user_question` 注册工具，这样所有**按工具名**识别提问的插件（等待气泡、提示音、侧边栏分类、活动文案等）都会照常触发
+
+但它有个前提：内置那一行必须先让位。实测在 `0.2.2-rc.3` 上，`tool-ask-user` 这一行写在 **agent preset 的 `plugins` 列表里**，profile 的 patch 按 id 打不到它（会报 `patch: entry "tool-ask-user" not found`），所以常规做法是**自定义一份 preset**，去掉 `tool-ask-user` 后再开启这个开关；名字被占时插件会退回 `let_user_choose` 并在日志里说明
+
+## 设置页
+
+设置里有两个入口指向同一页：左侧导航的 **选择题**，以及 设置 → 插件 → **选择题** 标签页。里面能当场把每个功能点一遍：
+
+| 区域 | 内容 |
+| --- | --- |
+| 发起测试 | 单选 / 多选 / 确认 / 填空 / 测验五个按钮，在你当前打开的会话里真弹一次（没人等结果，答完即收尾） |
+| 服务端参数 | `timeoutMs`、`maxInlineBytes`、`phpBinary`，保存后即时生效，并落到 `$DSH_HOME/dsh-visual-option.json`，重启后仍然有效 |
+| 界面偏好 | 默认预览宽度（自适应 / 768 / 390）、是否在对话里显示模式图标，存在浏览器本地 |
+
+服务端参数只覆盖 patch 里同名配置，patch 仍是基线；删掉那个 json 文件就回到 patch 的值
+
 ## 安装
 
-需要 DSH `0.2.0-rc` 及以上，Web profile
+需要 DSH `0.2.0-rc` 及以上，Web profile；`0.2.2-rc` 起最佳（那里 `agents` 服务改用 `get` + `session.header.origin` 判定主会话）
 
 > [!NOTE]
 > 本项目曾用名 `dsh-let-user-choose`，如果你是从旧版本升级，请注意在 `package.json` 中将依赖名和 `dsh.profile.bundles` 里的条目同步修改为 `dsh-visual-option`，工具名和 API 路径保持不变
@@ -368,7 +406,10 @@ Thanks.
     timeoutMs: 600000     # 默认等待上限（毫秒），夹在 5s–1h
     maxInlineBytes: 65536 # 单个内联 html/php 内容上限
     phpBinary: ""         # "" | "auto" | 可执行文件路径
+    replaceAskUserQuestion: false # true 时改用内置工具名 ask_user_question（需同时禁用内置那一行）
 ```
+
+`replaceAskUserQuestion` 只影响注册的工具名，不改 schema、协议与界面；系统提示词引导默认就开着，不受这个开关影响
 
 ## HTTP 接口（内部）
 
@@ -380,6 +421,8 @@ Thanks.
 | `/api/let-user-choose/answer` | POST | 提交答案 / 取消 / 提问 |
 | `/api/let-user-choose/hold` | POST | 用户已交互，取消限时 |
 | `/api/let-user-choose/source` | GET | 源码预览内容 |
+| `/api/let-user-choose/settings` | GET / POST | 设置页读写服务端参数（POST 需 `confirm: true`） |
+| `/api/let-user-choose/selftest` | POST | 设置页「发起测试」：在该会话造一次真实请求 |
 
 ## 安全与限制
 

@@ -18,6 +18,8 @@
     <a href="#seguridad-y-límites">Seguridad y límites</a>
   </p>
 
+  <p>v0.2.25 · autocomprobación 44/44 · MIT</p>
+
   <p>
     <a href="../README.md">汉语</a> ·
     <a href="./README-CN-Traditional.md">汉语(漢語)</a> ·
@@ -141,9 +143,47 @@ Incluye **6 juegos de textos** (chino simplificado, chino tradicional, English, 
 ### Ancho de la vista previa
 El ancho es `ajustar / 768 / 390`, así el mismo contenido se puede revisar a ancho de escritorio o de teléfono
 
+### Guía en el prompt del sistema
+El plugin añade una guía al prompt del sistema: cuando hay que pedirle una elección al usuario se usa `let_user_choose` en lugar de `ask_user_question` por defecto, y solo en situaciones especiales se recurre a la pregunta nativa; además, todo lo que el texto no alcanza a explicar (disposición, colores, el estado de un error, estructuras de datos, diferencias largas de código) debe llevar una vista previa con el código HTML inline en la opción correspondiente, en vez de dejar que el usuario lo imagine
+
+### La fila de la pregunta en el historial
+En el historial, esa llamada deja de ser una tarjeta genérica de herramienta y pasa a ser una fila como la de la pregunta nativa: a la izquierda, un icono según el modo; a la derecha, `modo: tema`
+
+| Modo | Icono | Texto |
+| --- | --- | --- |
+| Selección única | signo de interrogación dentro de un círculo | `Pregunta: <título>` |
+| Opción múltiple | dos casillas de verificación + dos líneas horizontales | `Pregunta de opción múltiple: <título>` |
+| Confirmación | marca de verificación dentro de un cuadro | `Confirmación: <título>` |
+| Texto libre | campo de entrada + dos líneas internas | `Texto libre: <título>` |
+| Cuestionario | dos tarjetas apiladas | `Cuestionario: <título>` |
+
+Mientras la pregunta sigue pendiente, esta fila se puede pulsar: equivale a reabrir el diálogo
+
+### Plegar y suspender
+El `—` de la esquina superior derecha pliega el diálogo en una cápsula pequeña en la esquina inferior derecha (icono + modo + título); la petición sigue pendiente y el modelo no continúa mientras no reciba el resultado. Toda la cápsula se puede pulsar para volver al diálogo; la cápsula también trae `Cancelar` para cerrar directamente
+
+> La barra de entrada no se controla: el `conversation.composer` de DSH es un slot de cadena a nivel de sesión que hoy solo acepta registros de la interfaz integrada, y los plugins de terceros no pueden registrarse; por eso, mientras está plegado, se puede seguir escribiendo y enviando mensajes, solo que el modelo se queda bloqueado en esa llamada de herramienta y no sigue hablando
+
+### Sustituir la pregunta nativa (experimental)
+Con `replaceAskUserQuestion: true` el plugin se registra con el nombre integrado `ask_user_question`, así todos los plugins que reconocen las preguntas **por nombre de herramienta** (burbuja de espera, sonido, categoría de la barra lateral, texto de actividad, etc.) se activan como siempre
+
+Pero tiene una condición previa: la fila integrada debe ceder el paso. En pruebas con `0.2.2-rc.3`, la fila `tool-ask-user` está escrita **en la lista `plugins` del agent preset**, y el patch del perfil no la alcanza por id (devuelve `patch: entry "tool-ask-user" not found`), así que lo habitual es **personalizar un preset**: quitar `tool-ask-user` y luego activar este interruptor; si el nombre está ocupado, el plugin vuelve a `let_user_choose` y lo explica en el log
+
+## Página de ajustes
+
+En los ajustes hay dos entradas que llevan a la misma página: **Diálogo de opciones** en la navegación izquierda, y la pestaña **Diálogo de opciones** en Ajustes → Plugins. Allí cada función se puede probar al momento:
+
+| Área | Contenido |
+| --- | --- |
+| Lanzar una prueba | botones de selección única / opción múltiple / confirmación / texto libre / cuestionario: lanzan una de verdad en la sesión que tengas abierta (nadie espera el resultado; se cierra al responder) |
+| Parámetros del servidor | `timeoutMs`, `maxInlineBytes`, `phpBinary`: se aplican al guardar y se persisten en `$DSH_HOME/dsh-visual-option.json`, así que siguen vigentes tras reiniciar |
+| Preferencias de interfaz | ancho de vista previa por defecto (ajustar / 768 / 390) y si mostrar los iconos de modo en la conversación; se guardan en el navegador |
+
+Los parámetros del servidor solo sobrescriben la configuración del mismo nombre en el patch, que sigue siendo la base; si borras ese archivo json vuelves a los valores del patch
+
 ## Instalación
 
-Requiere DSH `0.2.0-rc` o superior, perfil Web
+Requiere DSH `0.2.0-rc` o superior en el perfil web; mejor desde `0.2.2-rc`, donde el servicio `agents` decide la sesión principal con `get` + `session.header.origin`
 
 > [!NOTE]
 > El proyecto se llamó antes `dsh-let-user-choose`. Si actualizas desde una versión anterior, cambia el nombre de la dependencia en `package.json` y la entrada de `dsh.profile.bundles` a `dsh-visual-option`; el nombre de la herramienta y las rutas de la API no cambian
@@ -364,6 +404,8 @@ El diálogo del cliente y el Host solo se comunican por el canal `/api` que ya t
 | `/api/let-user-choose/answer` | POST | enviar respuesta / cancelar / preguntar |
 | `/api/let-user-choose/hold` | POST | el usuario ya interactuó, se anula el límite de tiempo |
 | `/api/let-user-choose/source` | GET | contenido de la vista previa de código fuente |
+| `/api/let-user-choose/settings` | GET/POST | lee y escribe los ajustes del host desde la página de ajustes; POST requiere `confirm: true` |
+| `/api/let-user-choose/selftest` | POST | botón de prueba: crea una petición real en esa sesión |
 
 ## Seguridad y límites
 

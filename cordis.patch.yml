@@ -9,6 +9,14 @@
 #   maxInlineBytes 单个内联 html/php 源码上限，默认 64 KiB
 #   phpBinary      '' = 不执行 PHP（只显示源码）；'auto' = 探测 PATH 上的 php；
 #                  其他值 = 直接当可执行文件路径
+#   设置页（设置 → 插件 → 选择题弹窗）会把 timeoutMs / maxInlineBytes / phpBinary
+#   的改动写进 $DSH_HOME/dsh-visual-option.json 并即时生效，优先级高于这里的值
+#   replaceAskUserQuestion
+#                  true = 用内置名字 ask_user_question 注册工具，按工具名识别
+#                  提问的插件（等待气泡、提示音、侧边栏分类）才会照常触发。
+#                  开启前必须先在 profile 的 patch 层禁用内置那一行，否则撞名：
+#                    - id: tool-ask-user
+#                      disabled: true
 # ============================================================================
 
 - insert:
@@ -18,3 +26,4 @@
         timeoutMs: 600000
         maxInlineBytes: 65536
         phpBinary: ""
+        replaceAskUserQuestion: false

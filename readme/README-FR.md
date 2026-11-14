@@ -18,6 +18,8 @@
     <a href="#sécurité-et-limites">Sécurité et limites</a>
   </p>
 
+  <p>v0.2.25 · auto-test 44/44 · MIT</p>
+
   <p>
     <a href="../README.md">汉语</a> ·
     <a href="./README-CN-Traditional.md">汉语(漢語)</a> ·
@@ -151,9 +153,51 @@ Réutilise les variables de thème du GUI, le masque, les rayons et l'anneau de 
 
 Largeur de prévisualisation au choix : `fit / 768 / 390` — le même contenu peut être vérifié en largeur desktop ou mobile
 
+### Consigne dans le prompt système
+
+Le plugin ajoute une consigne au prompt système : quand il faut faire choisir l'utilisateur, passer par `let_user_choose` plutôt que par `ask_user_question`, et ne revenir à la question native que dans des cas particuliers ; tout ce qui ne s'explique pas par du texte (mise en page, palette, capture d'erreur, structure de données, longue différence de code) doit fournir un aperçu HTML inline sur l'option concernée, au lieu de laisser l'utilisateur l'imaginer
+
+### La ligne de question dans l'historique
+
+Dans l'historique de la conversation, cet appel n'est plus une carte d'outil générique, mais une ligne au même rang que la question native : l'icône du mode à gauche, `mode : sujet` à droite
+
+| Mode | Icône | Libellé |
+| --- | --- | --- |
+| `single` | un point d'interrogation dans un cercle | `Question : <titre>` |
+| `multi` | deux cases à cocher + deux traits | `Choix multiple : <titre>` |
+| `confirm` | une coche dans un cadre | `Confirmation : <titre>` |
+| `fill` | un champ de saisie + deux traits | `Saisie libre : <titre>` |
+| `test` | deux cartes superposées | `Quiz : <titre>` |
+
+Cette ligne est cliquable tant que la question est en attente : un clic rouvre la fenêtre
+
+### Replier et suspendre
+
+Le `—` en haut à droite replie la fenêtre en une petite pastille dans le coin inférieur droit (icône + mode + titre) ; la requête reste en attente, et le modèle, sans résultat, ne continue pas à répondre. Toute la pastille est cliquable pour revenir à la fenêtre ; elle porte aussi `Annuler` pour conclure directement
+
+> La zone de saisie n'est pas reprise : `conversation.composer` de DSH est un emplacement « chain » au niveau de la session, qui n'accepte aujourd'hui que les enregistrements de l'UI intégrée, pas ceux d'un plugin tiers ; pendant que la fenêtre est repliée, vous pouvez donc toujours taper et envoyer des messages, le modèle restant simplement bloqué sur cet appel d'outil sans continuer à parler
+
+### Remplacer la question native (expérimental)
+
+Avec `replaceAskUserQuestion: true`, le plugin enregistre l'outil sous le nom intégré `ask_user_question`, de sorte que tous les plugins qui reconnaissent une question **par nom d'outil** (bulle d'attente, son de notification, classement dans la barre latérale, texte d'activité, etc.) se déclenchent comme d'habitude
+
+Cela suppose toutefois une condition : la ligne intégrée doit d'abord céder la place. Sur `0.2.2-rc.3`, la ligne `tool-ask-user` figure dans la **liste `plugins` de l'agent preset**, et le patch du profil ne peut pas l'atteindre par id (erreur `patch: entry "tool-ask-user" not found`) ; la démarche habituelle est donc de **dupliquer un preset**, d'en retirer `tool-ask-user`, puis d'activer ce commutateur. Si le nom est déjà pris, le plugin retombe sur `let_user_choose` et l'explique dans les logs
+
+## Page de réglages
+
+Deux entrées des réglages pointent vers la même page : **Choix visuels** dans la navigation de gauche, et l'onglet Paramètres → Plugins → **Choix visuels**. On peut y essayer chaque fonction point par point :
+
+| Zone | Contenu |
+| --- | --- |
+| Lancer un test | cinq boutons single / multi / confirm / fill / test, qui affichent vraiment une fenêtre dans la session ouverte (personne n'attend le résultat, la fenêtre se referme après la réponse) |
+| Paramètres serveur | `timeoutMs`, `maxInlineBytes`, `phpBinary` ; appliqués dès l'enregistrement et écrits dans `$DSH_HOME/dsh-visual-option.json`, donc toujours valables après un redémarrage |
+| Préférences d'interface | largeur d'aperçu par défaut (fit / 768 / 390) et affichage ou non de l'icône de mode dans la conversation ; stockées dans le navigateur |
+
+Les paramètres serveur ne remplacent que les configurations de même nom du patch, le patch reste la base : supprimer ce fichier json ramène aux valeurs du patch
+
 ## Installation
 
-Nécessite DSH `0.2.0-rc` ou plus récent, profil Web
+Nécessite DSH `0.2.0-rc` ou plus récent sur le profil web ; idéalement `0.2.2-rc` et au-delà, où le service `agents` détermine la session principale avec `get` et `session.header.origin`
 
 > [!NOTE]
 > Le projet s'est appelé `dsh-let-user-choose`. Si vous mettez à jour depuis une ancienne version, pensez à renommer la dépendance dans `package.json` et l'entrée dans `dsh.profile.bundles` en `dsh-visual-option` ; le nom de l'outil et les routes API ne changent pas
@@ -376,6 +420,8 @@ La fenêtre cliente et le Host ne communiquent que par le canal `/api` fourni pa
 | `/api/let-user-choose/answer` | POST | envoi de la réponse / annulation / question |
 | `/api/let-user-choose/hold` | POST | l'utilisateur a interagi, on retire la limite de temps |
 | `/api/let-user-choose/source` | GET | contenu de l'aperçu source |
+| `/api/let-user-choose/settings` | GET / POST | lecture et écriture des réglages de l'hôte depuis la page de réglages ; `POST` exige `confirm: true` |
+| `/api/let-user-choose/selftest` | POST | bouton de test : crée une vraie requête dans cette session |
 
 ## Sécurité et limites
 

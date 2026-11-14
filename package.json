@@ -1,6 +1,6 @@
 {
   "name": "dsh-visual-option",
-  "version": "0.2.15",
+  "version": "0.2.25",
   "private": false,
   "description": "DSH Web 插件：把多个链接 / 本地页面 / 内联 HTML / PHP 变体渲染成可预览的选项，用户点选并备注后，阻塞式工具 let_user_choose 返回结构化答案",
   "type": "module",

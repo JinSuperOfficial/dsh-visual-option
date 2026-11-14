@@ -14,10 +14,36 @@ window.__ModuleLoader__.load({
     const h = React.createElement
 
     const API = '/api/let-user-choose'
-    const CLIENT_VERSION = '0.2.15'
+    const CLIENT_VERSION = '0.2.25'
     const POLL_MS = 1000
     const TOAST_MS = 2600
     const FRAME_SLOW_MS = 6000
+
+    const PREFS_KEY = 'dsh-visual-option:prefs'
+    const WIDTHS = ['auto', '768', '390']
+
+    function loadPrefs() {
+      try {
+        const raw = JSON.parse(window.localStorage.getItem(PREFS_KEY) || '{}')
+        return {
+          width: WIDTHS.includes(raw.width) ? raw.width : 'auto',
+          icons: raw.icons !== false,
+        }
+      } catch {
+        return { width: 'auto', icons: true }
+      }
+    }
+
+    const PREFS = loadPrefs()
+
+    function savePrefs(patch) {
+      Object.assign(PREFS, patch)
+      try {
+        window.localStorage.setItem(PREFS_KEY, JSON.stringify(PREFS))
+      } catch {
+        /* private mode: keep the in-memory value */
+      }
+    }
 
     const LOCAL_SANDBOX = 'allow-scripts allow-forms allow-popups allow-modals allow-same-origin'
     const EXT_SANDBOX = 'allow-scripts allow-forms allow-popups allow-modals'
@@ -29,6 +55,34 @@ window.__ModuleLoader__.load({
       submitting: '提交中…',
       cancel: '取消',
       close: '关闭',
+      minimize: '收起',
+      restore: '展开',
+      seatKicker: '等待你回答',
+      seatIdle: '这个选择还没作答',
+      modeAsk: '提问',
+      modeMulti: '多选提问',
+      modeConfirm: '确认',
+      modeFill: '填空',
+      modeQuiz: '测验',
+      rowSep: '：',
+      rowCancelled: '已取消',
+      rowTimeout: '已超时',
+      settingsTab: '选择题弹窗',
+      settingsTest: '发起测试',
+      settingsTestHint: '在你当前打开的会话里真弹一次，答完即收尾',
+      settingsParams: '服务端参数',
+      settingsSave: '保存',
+      settingsTimeout: '等待上限（毫秒）',
+      settingsInlineBytes: '内联内容上限（字节）',
+      settingsPhp: 'PHP 可执行文件',
+      settingsPrefs: '界面偏好',
+      settingsWidth: '默认预览宽度',
+      settingsIcons: '对话里显示模式图标',
+      settingsSaved: '已保存',
+      settingsFailed: '操作失败',
+      settingsLoadFailed: '读取设置失败',
+      settingsSent: '已发出，去会话里看看',
+      settingsNoSession: '先打开一个会话再测试',
       previewWidth: '预览宽度',
       widthAuto: '自适应',
       refreshAll: '刷新预览',
@@ -73,6 +127,34 @@ window.__ModuleLoader__.load({
       submitting: 'Submitting…',
       cancel: 'Cancel',
       close: 'Close',
+      minimize: 'Collapse',
+      restore: 'Open',
+      seatKicker: 'Waiting for your answer',
+      seatIdle: 'This choice is still unanswered',
+      modeAsk: 'Question',
+      modeMulti: 'Multi-select',
+      modeConfirm: 'Confirm',
+      modeFill: 'Fill in',
+      modeQuiz: 'Quiz',
+      rowSep: ': ',
+      rowCancelled: 'cancelled',
+      rowTimeout: 'timed out',
+      settingsTab: 'Choice dialog',
+      settingsTest: 'Run a test',
+      settingsTestHint: 'Fires a real request in the session you have open; it settles as soon as you answer',
+      settingsParams: 'Host settings',
+      settingsSave: 'Save',
+      settingsTimeout: 'Wait limit (ms)',
+      settingsInlineBytes: 'Inline limit (bytes)',
+      settingsPhp: 'PHP executable',
+      settingsPrefs: 'Interface',
+      settingsWidth: 'Default preview width',
+      settingsIcons: 'Show mode icons in chat',
+      settingsSaved: 'Saved',
+      settingsFailed: 'Failed',
+      settingsLoadFailed: 'Could not read settings',
+      settingsSent: 'Sent — check the session',
+      settingsNoSession: 'Open a session first',
       previewWidth: 'Preview width',
       widthAuto: 'Fit',
       refreshAll: 'Refresh previews',
@@ -117,6 +199,34 @@ window.__ModuleLoader__.load({
       submitting: '提交中…',
       cancel: '取消',
       close: '關閉',
+      minimize: '收合',
+      restore: '展開',
+      seatKicker: '等待你回答',
+      seatIdle: '這個選擇還沒作答',
+      modeAsk: '提問',
+      modeMulti: '多選提問',
+      modeConfirm: '確認',
+      modeFill: '填空',
+      modeQuiz: '測驗',
+      rowSep: '：',
+      rowCancelled: '已取消',
+      rowTimeout: '已逾時',
+      settingsTab: '選擇題彈窗',
+      settingsTest: '發起測試',
+      settingsTestHint: '在你當前打開的會話裡真彈一次，答完即收尾',
+      settingsParams: '服務端參數',
+      settingsSave: '儲存',
+      settingsTimeout: '等待上限（毫秒）',
+      settingsInlineBytes: '內聯內容上限（位元組）',
+      settingsPhp: 'PHP 執行檔',
+      settingsPrefs: '介面偏好',
+      settingsWidth: '預設預覽寬度',
+      settingsIcons: '對話裡顯示模式圖示',
+      settingsSaved: '已儲存',
+      settingsFailed: '操作失敗',
+      settingsLoadFailed: '讀取設定失敗',
+      settingsSent: '已發出，去會話裡看看',
+      settingsNoSession: '先打開一個會話再測試',
       previewWidth: '預覽寬度',
       widthAuto: '自適應',
       refreshAll: '重新整理預覽',
@@ -161,6 +271,34 @@ window.__ModuleLoader__.load({
       submitting: '送信中…',
       cancel: 'キャンセル',
       close: '閉じる',
+      minimize: '折りたたむ',
+      restore: '開く',
+      seatKicker: '回答を待っています',
+      seatIdle: 'この選択はまだ未回答です',
+      modeAsk: '質問',
+      modeMulti: '複数選択',
+      modeConfirm: '確認',
+      modeFill: '記入',
+      modeQuiz: 'テスト',
+      rowSep: '：',
+      rowCancelled: 'キャンセル済み',
+      rowTimeout: 'タイムアウト',
+      settingsTab: '選択ダイアログ',
+      settingsTest: 'テストを実行',
+      settingsTestHint: '開いているセッションで実際に一度表示します。回答すると終了します',
+      settingsParams: 'ホスト設定',
+      settingsSave: '保存',
+      settingsTimeout: '待機上限（ミリ秒）',
+      settingsInlineBytes: 'インライン上限（バイト）',
+      settingsPhp: 'PHP 実行ファイル',
+      settingsPrefs: '表示設定',
+      settingsWidth: '既定のプレビュー幅',
+      settingsIcons: '会話にモードアイコンを表示',
+      settingsSaved: '保存しました',
+      settingsFailed: '失敗しました',
+      settingsLoadFailed: '設定を読み込めません',
+      settingsSent: '送信しました。セッションを確認してください',
+      settingsNoSession: '先にセッションを開いてください',
       previewWidth: 'プレビュー幅',
       widthAuto: '自動',
       refreshAll: 'プレビューを更新',
@@ -205,6 +343,34 @@ window.__ModuleLoader__.load({
       submitting: 'Enviando…',
       cancel: 'Cancelar',
       close: 'Cerrar',
+      minimize: 'Contraer',
+      restore: 'Abrir',
+      seatKicker: 'Esperando tu respuesta',
+      seatIdle: 'Esta elección sigue sin responder',
+      modeAsk: 'Pregunta',
+      modeMulti: 'Selección múltiple',
+      modeConfirm: 'Confirmar',
+      modeFill: 'Rellenar',
+      modeQuiz: 'Cuestionario',
+      rowSep: ': ',
+      rowCancelled: 'cancelado',
+      rowTimeout: 'agotado',
+      settingsTab: 'Diálogo de opciones',
+      settingsTest: 'Ejecutar una prueba',
+      settingsTestHint: 'Lanza una petición real en la sesión abierta; termina al responder',
+      settingsParams: 'Ajustes del host',
+      settingsSave: 'Guardar',
+      settingsTimeout: 'Límite de espera (ms)',
+      settingsInlineBytes: 'Límite en línea (bytes)',
+      settingsPhp: 'Ejecutable PHP',
+      settingsPrefs: 'Interfaz',
+      settingsWidth: 'Ancho de vista previa',
+      settingsIcons: 'Mostrar iconos de modo en el chat',
+      settingsSaved: 'Guardado',
+      settingsFailed: 'Error',
+      settingsLoadFailed: 'No se pudo leer la configuración',
+      settingsSent: 'Enviado; revisa la sesión',
+      settingsNoSession: 'Abre una sesión primero',
       previewWidth: 'Ancho de vista previa',
       widthAuto: 'Ajustar',
       refreshAll: 'Actualizar vistas previas',
@@ -249,6 +415,34 @@ window.__ModuleLoader__.load({
       submitting: 'Envoi…',
       cancel: 'Annuler',
       close: 'Fermer',
+      minimize: 'Réduire',
+      restore: 'Ouvrir',
+      seatKicker: 'En attente de ta réponse',
+      seatIdle: 'Ce choix est encore sans réponse',
+      modeAsk: 'Question',
+      modeMulti: 'Choix multiples',
+      modeConfirm: 'Confirmation',
+      modeFill: 'Saisie',
+      modeQuiz: 'Quiz',
+      rowSep: ' : ',
+      rowCancelled: 'annulé',
+      rowTimeout: 'expiré',
+      settingsTab: 'Boîte de choix',
+      settingsTest: 'Lancer un test',
+      settingsTestHint: "Envoie une vraie requête dans la session ouverte ; elle se termine dès que tu réponds",
+      settingsParams: 'Réglages de l’hôte',
+      settingsSave: 'Enregistrer',
+      settingsTimeout: "Limite d'attente (ms)",
+      settingsInlineBytes: 'Limite en ligne (octets)',
+      settingsPhp: 'Exécutable PHP',
+      settingsPrefs: 'Interface',
+      settingsWidth: 'Largeur par défaut',
+      settingsIcons: 'Afficher les icônes de mode',
+      settingsSaved: 'Enregistré',
+      settingsFailed: 'Échec',
+      settingsLoadFailed: 'Lecture des réglages impossible',
+      settingsSent: 'Envoyé ; vérifie la session',
+      settingsNoSession: "Ouvre d'abord une session",
       previewWidth: "Largeur de l'aperçu",
       widthAuto: 'Ajuster',
       refreshAll: 'Actualiser les aperçus',
@@ -414,6 +608,27 @@ window.__ModuleLoader__.load({
 .luc-primary{height:36px;padding:0 16px;border:none;border-radius:var(--dsw-radius-md);background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);font-size:14px}
 .luc-primary:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover)}
 .luc-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:1001;padding:8px 14px;border-radius:10px;border:1px solid var(--dsw-alias-border-l1);background:var(--dsw-alias-bg-overlay);color:var(--dsw-alias-label-primary);font-size:13px;line-height:20px;box-shadow:var(--dsw-elevation-prominent);pointer-events:none}
+.luc-min{width:28px;height:28px;border:none;border-radius:var(--dsw-radius-sm);background:transparent;color:var(--dsw-alias-label-secondary);font-size:16px;line-height:1;cursor:pointer}
+.luc-min:hover{background:var(--dsw-alias-interactive-bg-hover)}
+.luc-row{display:flex;align-items:center;gap:6px;min-width:0;height:calc(24px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size,14px);line-height:calc(24px + var(--dsh-content-font-delta,0px))}
+@media (hover:hover){.luc-row:hover{color:var(--dsw-alias-label-secondary)}}
+.luc-row-icon{flex:none;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;color:inherit}
+.luc-row-label{flex:none;color:inherit}
+.luc-row-sep{flex:none;color:inherit;opacity:.75}
+.luc-row-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dsw-alias-label-secondary)}
+.luc-row-note{flex:none;color:var(--dsw-alias-label-tertiary);font-size:12px}
+.luc-row-clickable{cursor:pointer}
+.luc-row[data-mode="quiz"] .luc-row-icon{color:var(--dsw-alias-state-business-primary)}
+.luc-pill{pointer-events:auto;cursor:pointer;position:fixed;right:18px;bottom:104px;z-index:999;display:flex;align-items:center;gap:8px;max-width:min(320px,calc(100vw - 36px));padding:8px 10px 8px 12px;border-radius:999px;border:0.5px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-layer-2);box-shadow:var(--dsw-elevation-prominent);color:var(--dsw-alias-label-primary);font-size:12px;line-height:18px;box-sizing:border-box}
+.luc-pill-icon{flex:none;display:inline-flex;align-items:center;color:var(--dsw-alias-state-business-primary)}
+.luc-pill-text{min-width:0;display:flex;flex-direction:column}
+.luc-pill-label{color:var(--dsw-alias-label-tertiary);font-size:11px;line-height:14px}
+.luc-pill-title{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.luc-pill-actions{flex:none;display:flex;align-items:center;gap:6px;margin-left:2px}
+.luc-pill-btn{height:24px;padding:0 9px;border-radius:999px;border:0.5px solid var(--dsw-alias-border-l3);background:transparent;color:inherit;font-size:12px;line-height:16px;cursor:pointer;white-space:nowrap}
+.luc-pill-btn:hover{background:var(--dsw-alias-interactive-bg-hover)}
+.luc-pill-btn[data-primary]{border-color:var(--dsw-alias-brand-primary);color:var(--dsw-alias-brand-primary)}
+
 `
 
     function openInTab(url) {
@@ -434,6 +649,38 @@ window.__ModuleLoader__.load({
       const minutes = Math.floor(safe / 60)
       const seconds = safe % 60
       return `${minutes}:${String(seconds).padStart(2, '0')}`
+    }
+
+    /**
+     * 弹窗与输入区共用的一份最小化状态：弹窗收起后由输入区的常驻条接管，
+     * 请求本身仍然挂起（Host 那边的工具调用一直卡着），所以模型不会继续说话。
+     */
+    function createChoiceUi() {
+      let minimized = false
+      const listeners = new Set()
+      const notify = () => {
+        for (const listener of [...listeners]) {
+          try {
+            listener()
+          } catch {
+            /* a listener must not break the toggle */
+          }
+        }
+      }
+      return {
+        get() {
+          return minimized
+        },
+        set(next) {
+          if (minimized === next) return
+          minimized = next
+          notify()
+        },
+        subscribe(listener) {
+          listeners.add(listener)
+          return () => listeners.delete(listener)
+        },
+      }
     }
 
     function initialDraft(view) {
@@ -783,17 +1030,18 @@ window.__ModuleLoader__.load({
       )
     }
 
-    function createDialog(ctx, t) {
+    function createDialog(ctx, t, ui, publish, ensureToolview) {
       return function Dialog() {
         useLocaleRevision(ctx)
         const sessionId = useSessionKey(ctx)
 
         const [req, setReq] = React.useState(null)
+        const [minimized, setMinimized] = React.useState(ui.get())
         const [draft, setDraft] = React.useState({})
         const [submitting, setSubmitting] = React.useState(false)
         const [error, setError] = React.useState(null)
         const [notice, setNotice] = React.useState(null)
-        const [width, setWidth] = React.useState('auto')
+        const [width, setWidth] = React.useState(PREFS.width)
         const [reload, setReload] = React.useState(0)
         const [openOther, setOpenOther] = React.useState({})
         const [step, setStep] = React.useState(0)
@@ -829,12 +1077,14 @@ window.__ModuleLoader__.load({
               setDraft({})
               setSubmitting(false)
               setError(null)
+              ui.set(false)
             }
             return
           }
           setNow(Date.now())
           if (reqIdRef.current === next.id) return
           reqIdRef.current = next.id
+          ui.set(false)
           setReq(next)
           setDraft(initialDraft(next))
           setError(null)
@@ -846,6 +1096,45 @@ window.__ModuleLoader__.load({
           setAskValue('')
           resultRef.current = false
         }
+
+        React.useEffect(() => {
+          return ui.subscribe(() => setMinimized(ui.get()))
+        }, [])
+
+        /*
+         * 把请求登记成“挂起交互”：输入区会被常驻条取代（和 ask_user_question 一样
+         * 发不出新消息），收起弹窗时那条常驻条就是唯一入口，请求本身继续挂起。
+         */
+        React.useEffect(() => {
+          if (!req || !sessionId || typeof publish !== 'function') return undefined
+          const first = req.questions && req.questions[0]
+          const title = req.title || (first && first.question) || ''
+          let unpublish = null
+          try {
+            unpublish = publish(
+              {
+                key: 'let-user-choose:' + req.id,
+                sessionId,
+                kind: 'let-user-choose',
+                requestId: req.id,
+                title,
+                total: req.questions ? req.questions.length : 1,
+              },
+              () => {},
+            )
+          } catch {
+            unpublish = null
+          }
+          return () => {
+            if (typeof unpublish === 'function') {
+              try {
+                unpublish()
+              } catch {
+                /* already released */
+              }
+            }
+          }
+        }, [req && req.id, sessionId])
 
         React.useEffect(() => {
           if (!sessionId) {
@@ -870,6 +1159,9 @@ window.__ModuleLoader__.load({
                 })
                 if (response.ok) {
                   const data = await response.json()
+                  if (typeof ensureToolview === 'function' && data && typeof data.toolName === 'string') {
+                    ensureToolview(data.toolName)
+                  }
                   if (!disposed) accept(data.requests && data.requests[0] ? data.requests[0] : null, data.now)
                 }
               } catch {
@@ -897,17 +1189,17 @@ window.__ModuleLoader__.load({
         }, [req !== null])
 
         React.useEffect(() => {
-          if (!req) return undefined
+          if (!req || minimized) return undefined
           const previous = document.body.style.overflow
           document.body.style.overflow = 'hidden'
           return () => {
             document.body.style.overflow = previous
           }
-        }, [req !== null])
+        }, [req !== null, minimized])
 
         React.useEffect(() => {
-          if (req && panelRef.current) panelRef.current.focus()
-        }, [req && req.id])
+          if (req && !minimized && panelRef.current) panelRef.current.focus()
+        }, [req && req.id, minimized])
 
         React.useEffect(() => {
           return () => {
@@ -1201,6 +1493,17 @@ window.__ModuleLoader__.load({
               'button',
               {
                 type: 'button',
+                className: 'luc-min',
+                title: t('minimize'),
+                'aria-label': t('minimize'),
+                onClick: () => ui.set(true),
+              },
+              '—',
+            ),
+            h(
+              'button',
+              {
+                type: 'button',
                 className: 'luc-close',
                 title: t('close'),
                 'aria-label': t('close'),
@@ -1460,6 +1763,59 @@ window.__ModuleLoader__.load({
               ),
             )
 
+        // 收起时：输入区能接管就用常驻条，接管不了就退成右下角的小胶囊
+        // 两种形态都保持请求挂起，没有作答就没有结果
+        if (!req) return null
+        if (minimized) {
+          const pillMode = choiceModeOf(readChoiceArgsFromView(req))
+          const pillTitle = req.title || (req.questions && req.questions[0] && req.questions[0].question) || ''
+          return h(
+            React.Fragment,
+            null,
+            h('style', { dangerouslySetInnerHTML: { __html: CSS } }),
+            h(
+              'div',
+              { className: 'luc-pill', role: 'status', onClick: () => ui.set(false) },
+              h('span', { className: 'luc-pill-icon' }, renderModeIcon(pillMode)),
+              h(
+                'div',
+                { className: 'luc-pill-text' },
+                h('div', { className: 'luc-pill-label' }, t(ROW_LABELS[pillMode]) || t('seatKicker')),
+                pillTitle ? h('div', { className: 'luc-pill-title' }, pillTitle) : null,
+              ),
+              h(
+                'div',
+                { className: 'luc-pill-actions' },
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'luc-pill-btn',
+                    onClick: (event) => {
+                      event.stopPropagation()
+                      void submit('cancel')
+                    },
+                  },
+                  t('cancel'),
+                ),
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'luc-pill-btn',
+                    'data-primary': 'true',
+                    onClick: (event) => {
+                      event.stopPropagation()
+                      ui.set(false)
+                    },
+                  },
+                  t('restore'),
+                ),
+              ),
+            ),
+          )
+        }
+
         return h(
           React.Fragment,
           null,
@@ -1479,6 +1835,397 @@ window.__ModuleLoader__.load({
               askBar,
               otherBar,
               footer,
+            ),
+          ),
+        )
+      }
+    }
+
+    /** 转录里代替默认工具卡片的那一行：`模式：主题`，和原生提问卡片同一排风格。 */
+    /** 服务端返回的请求快照本来就是普通对象，直接借同一个判定。 */
+    function readChoiceArgsFromView(view) {
+      if (!view || typeof view !== 'object') return {}
+      return { title: view.title, questions: view.questions, test: view.test === true }
+    }
+
+    /**
+     * Tool 视图拿到的 `args` 是懒读取视图（PartialArguments），不是普通对象：
+     * 直接 `args.title` 永远是 undefined，必须走 `value(key)` / `text(key)`。
+     */
+    function readChoiceArgs(args) {
+      if (!args || typeof args !== 'object') return {}
+      const read = (key) => {
+        if (typeof args.value === 'function') {
+          let value
+          try {
+            value = args.value(key)
+          } catch {
+            value = undefined
+          }
+          if (value !== undefined) return value
+          if (typeof args.text === 'function') {
+            try {
+              return args.text(key)
+            } catch {
+              return undefined
+            }
+          }
+          return undefined
+        }
+        return args[key]
+      }
+      return { title: read('title'), questions: read('questions'), test: read('test') }
+    }
+
+    /** 一次调用里谁是“主角”模式：测验优先，其次看第一题。 */
+    function choiceModeOf(args) {
+      if (args && args.test === true) return 'quiz'
+      const questions = args && Array.isArray(args.questions) ? args.questions : []
+      const first = questions[0] || {}
+      if (first.mode === 'multi' || (first.mode !== 'fill' && first.mode !== 'confirm' && first.multiSelect === true)) {
+        return 'multi'
+      }
+      if (first.mode === 'confirm') return 'confirm'
+      if (first.mode === 'fill') return 'fill'
+      return 'ask'
+    }
+
+    const ROW_LABELS = {
+      ask: 'modeAsk',
+      multi: 'modeMulti',
+      confirm: 'modeConfirm',
+      fill: 'modeFill',
+      quiz: 'modeQuiz',
+    }
+
+    /** 五种模式各一个线稿图标：问号圈 / 勾选框+行 / 勾选方框 / 填空框 / 叠放测验卡 */
+    function renderModeIcon(mode) {
+      const paths = {
+        ask: [
+          h('circle', { key: 'c', cx: 8, cy: 8, r: 6.2 }),
+          h('path', { key: 'q', d: 'M6.3 6.1a1.8 1.8 0 1 1 2.55 1.66c-.55.24-.9.72-.9 1.33v.3' }),
+          h('path', { key: 'd', d: 'M7.95 11.5h.1' }),
+        ],
+        multi: [
+          h('rect', { key: 'a', x: 2.4, y: 2.6, width: 3.4, height: 3.4, rx: 1 }),
+          h('rect', { key: 'b', x: 2.4, y: 9.9, width: 3.4, height: 3.4, rx: 1 }),
+          h('path', { key: 'c', d: 'M3.4 4.3l.9.9 1.4-1.7' }),
+          h('path', { key: 'd', d: 'M8.2 4.3h5.4' }),
+          h('path', { key: 'e', d: 'M8.2 11.6h5.4' }),
+        ],
+        confirm: [
+          h('rect', { key: 'a', x: 2.2, y: 2.2, width: 11.6, height: 11.6, rx: 3 }),
+          h('path', { key: 'b', d: 'M5.3 8.2l1.9 1.9 3.6-3.9' }),
+        ],
+        fill: [
+          h('rect', { key: 'a', x: 1.9, y: 3.2, width: 12.2, height: 9.6, rx: 2 }),
+          h('path', { key: 'b', d: 'M4.4 6.4h7.2' }),
+          h('path', { key: 'c', d: 'M4.4 9.6h4.4' }),
+        ],
+        quiz: [
+          h('rect', { key: 'a', x: 2.1, y: 2.1, width: 8, height: 8, rx: 1.8 }),
+          h('rect', { key: 'b', x: 5.4, y: 5.4, width: 8, height: 8, rx: 1.8 }),
+        ],
+      }
+      return h(
+        'svg',
+        {
+          viewBox: '0 0 16 16',
+          width: 14,
+          height: 14,
+          fill: 'none',
+          stroke: 'currentColor',
+          strokeWidth: 1.4,
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+          'aria-hidden': 'true',
+        },
+        paths[mode] || paths.ask,
+      )
+    }
+
+    function createChoiceRow(ui) {
+      return function ChoiceRow(props) {
+      const block = props.block || {}
+      const args = readChoiceArgs(block.args)
+      const meta = block.meta && typeof block.meta === 'object' ? block.meta : {}
+      const mode = choiceModeOf(args)
+      const questions = Array.isArray(args.questions) ? args.questions : []
+      const first = questions[0] || {}
+      const title = typeof args.title === 'string' && args.title !== '' ? args.title : first.question || ''
+      const t = typeof props.t === 'function' ? props.t : (key) => key
+      const note = meta.status === 'cancelled' ? t('rowCancelled') : meta.status === 'timeout' ? t('rowTimeout') : ''
+      const pending = props.phase !== 'result' && note === ''
+      return h(
+        React.Fragment,
+        null,
+        h('style', { dangerouslySetInnerHTML: { __html: CSS } }),
+        h(
+          'div',
+          {
+            className: 'luc-row' + (pending ? ' luc-row-clickable' : ''),
+            'data-mode': mode,
+            'data-tool': props.toolName || 'let_user_choose',
+            ...(pending ? { role: 'button', tabIndex: 0, onClick: () => ui.set(false) } : {}),
+          },
+          PREFS.icons ? h('span', { className: 'luc-row-icon' }, renderModeIcon(mode)) : null,
+          h('span', { className: 'luc-row-label' }, t(ROW_LABELS[mode])),
+          title ? h('span', { className: 'luc-row-sep' }, t('rowSep')) : null,
+          title ? h('span', { className: 'luc-row-title' }, title) : null,
+          note ? h('span', { className: 'luc-row-note' }, note) : null,
+        ),
+      )
+      }
+    }
+
+    const SETTINGS_CSS = `
+.luc-set{display:flex;flex-direction:column;gap:18px;font-size:13px;line-height:20px;color:var(--dsw-alias-label-primary)}
+.luc-set-sec{display:flex;flex-direction:column;gap:8px}
+.luc-set-h{font-weight:500;font-size:13px;color:var(--dsw-alias-label-primary)}
+.luc-set-note{color:var(--dsw-alias-label-tertiary);font-size:12px;line-height:18px}
+.luc-set-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.luc-set-label{min-width:132px;color:var(--dsw-alias-label-secondary)}
+.luc-set-in{height:28px;padding:0 8px;box-sizing:border-box;border:0.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-bg-base);color:var(--dsw-alias-label-primary);font:inherit;font-size:13px}
+.luc-set-in-num{width:120px}
+.luc-set-in-wide{width:260px}
+.luc-set-btn{height:28px;padding:0 12px;border-radius:var(--dsw-radius-sm);border:0.5px solid var(--dsw-alias-border-l3);background:transparent;color:var(--dsw-alias-label-primary);font-size:12px;line-height:18px;cursor:pointer}
+.luc-set-btn:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover)}
+.luc-set-btn:disabled{opacity:.5;cursor:default}
+.luc-set-primary{border-color:var(--dsw-alias-brand-primary);color:var(--dsw-alias-brand-primary)}
+.luc-set-status{font-size:12px;line-height:18px}
+.luc-set-ok{color:var(--dsw-alias-state-success-primary,var(--dsw-alias-label-secondary))}
+.luc-set-err{color:var(--dsw-alias-state-error-primary)}
+`
+
+    /** 设置 → 插件 → 选择题弹窗：每个功能都能当场点一下，参数也能调 */
+    function createSettingsPage(ctx, t) {
+      return function SettingsPage() {
+        const [config, setConfig] = React.useState(null)
+        const [draft, setDraft] = React.useState({ timeoutMs: '', maxInlineBytes: '', phpBinary: '' })
+        const [status, setStatus] = React.useState(null)
+        const [busy, setBusy] = React.useState(false)
+        const [prefs, setPrefs] = React.useState({ width: PREFS.width, icons: PREFS.icons })
+
+        React.useEffect(() => {
+          let disposed = false
+          void (async () => {
+            try {
+              const response = await fetch(`${API}/settings`, { cache: 'no-store' })
+              if (!response.ok) throw new Error(String(response.status))
+              const data = await response.json()
+              if (disposed) return
+              setConfig(data.config)
+              setDraft({
+                timeoutMs: String(data.config.timeoutMs),
+                maxInlineBytes: String(data.config.maxInlineBytes),
+                phpBinary: String(data.config.phpBinary ?? ''),
+              })
+            } catch {
+              if (!disposed) setStatus({ kind: 'err', text: t('settingsLoadFailed') })
+            }
+          })()
+          return () => {
+            disposed = true
+          }
+        }, [])
+
+        async function save() {
+          setBusy(true)
+          setStatus(null)
+          try {
+            const response = await fetch(`${API}/settings`, {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              cache: 'no-store',
+              body: JSON.stringify({
+                confirm: true,
+                timeoutMs: Number(draft.timeoutMs),
+                maxInlineBytes: Number(draft.maxInlineBytes),
+                phpBinary: draft.phpBinary,
+              }),
+            })
+            const data = await response.json().catch(() => ({}))
+            if (!response.ok || data.ok !== true) throw new Error(data.error || String(response.status))
+            setConfig(data.config)
+            setDraft({
+              timeoutMs: String(data.config.timeoutMs),
+              maxInlineBytes: String(data.config.maxInlineBytes),
+              phpBinary: String(data.config.phpBinary ?? ''),
+            })
+            setStatus({ kind: 'ok', text: t('settingsSaved') })
+          } catch {
+            setStatus({ kind: 'err', text: t('settingsFailed') })
+          } finally {
+            setBusy(false)
+          }
+        }
+
+        async function test(mode) {
+          const sessionId = ctx.uiSession.adapter.current.getSnapshot().key
+          if (!sessionId) {
+            setStatus({ kind: 'err', text: t('settingsNoSession') })
+            return
+          }
+          setBusy(true)
+          setStatus(null)
+          try {
+            const response = await fetch(`${API}/selftest`, {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              cache: 'no-store',
+              body: JSON.stringify({ confirm: true, sessionId, mode }),
+            })
+            const data = await response.json().catch(() => ({}))
+            if (!response.ok || data.ok !== true) throw new Error(data.error || String(response.status))
+            setStatus({ kind: 'ok', text: t('settingsSent') })
+          } catch {
+            setStatus({ kind: 'err', text: t('settingsFailed') })
+          } finally {
+            setBusy(false)
+          }
+        }
+
+        function setPref(patch) {
+          savePrefs(patch)
+          setPrefs({ ...prefs, ...patch })
+        }
+
+        const tests = [
+          ['single', t('modeAsk')],
+          ['multi', t('modeMulti')],
+          ['confirm', t('modeConfirm')],
+          ['fill', t('modeFill')],
+          ['quiz', t('modeQuiz')],
+        ]
+
+        const widthOptions = [
+          ['auto', t('widthAuto')],
+          ['768', '768'],
+          ['390', '390'],
+        ]
+
+        return h(
+          React.Fragment,
+          null,
+          h('style', { dangerouslySetInnerHTML: { __html: SETTINGS_CSS } }),
+          h(
+            'div',
+            { className: 'luc-set' },
+            h(
+              'div',
+              { className: 'luc-set-sec' },
+              h('div', { className: 'luc-set-h' }, t('settingsTest')),
+              h('div', { className: 'luc-set-note' }, t('settingsTestHint')),
+              h(
+                'div',
+                { className: 'luc-set-row' },
+                ...tests.map(([mode, label], index) =>
+                  h(
+                    'button',
+                    {
+                      key: mode,
+                      type: 'button',
+                      className: 'luc-set-btn' + (index === 0 ? ' luc-set-primary' : ''),
+                      disabled: busy,
+                      onClick: () => void test(mode),
+                    },
+                    label,
+                  ),
+                ),
+              ),
+            ),
+            h(
+              'div',
+              { className: 'luc-set-sec' },
+              h('div', { className: 'luc-set-h' }, t('settingsParams')),
+              h(
+                'div',
+                { className: 'luc-set-row' },
+                h('span', { className: 'luc-set-label' }, t('settingsTimeout')),
+                h('input', {
+                  className: 'luc-set-in luc-set-in-num',
+                  type: 'number',
+                  min: 5000,
+                  max: 3600000,
+                  step: 1000,
+                  value: draft.timeoutMs,
+                  onChange: (event) => setDraft({ ...draft, timeoutMs: event.target.value }),
+                }),
+              ),
+              h(
+                'div',
+                { className: 'luc-set-row' },
+                h('span', { className: 'luc-set-label' }, t('settingsInlineBytes')),
+                h('input', {
+                  className: 'luc-set-in luc-set-in-num',
+                  type: 'number',
+                  min: 1024,
+                  max: 1048576,
+                  step: 1024,
+                  value: draft.maxInlineBytes,
+                  onChange: (event) => setDraft({ ...draft, maxInlineBytes: event.target.value }),
+                }),
+              ),
+              h(
+                'div',
+                { className: 'luc-set-row' },
+                h('span', { className: 'luc-set-label' }, t('settingsPhp')),
+                h('input', {
+                  className: 'luc-set-in luc-set-in-wide',
+                  type: 'text',
+                  placeholder: '"auto" 或可执行文件路径，留空表示不执行',
+                  value: draft.phpBinary,
+                  onChange: (event) => setDraft({ ...draft, phpBinary: event.target.value }),
+                }),
+              ),
+              h(
+                'div',
+                { className: 'luc-set-row' },
+                h(
+                  'button',
+                  { type: 'button', className: 'luc-set-btn', disabled: busy || !config, onClick: () => void save() },
+                  t('settingsSave'),
+                ),
+                status
+                  ? h(
+                      'span',
+                      {
+                        className:
+                          'luc-set-status ' + (status.kind === 'ok' ? 'luc-set-ok' : 'luc-set-err'),
+                      },
+                      status.text,
+                    )
+                  : null,
+              ),
+            ),
+            h(
+              'div',
+              { className: 'luc-set-sec' },
+              h('div', { className: 'luc-set-h' }, t('settingsPrefs')),
+              h(
+                'div',
+                { className: 'luc-set-row' },
+                h('span', { className: 'luc-set-label' }, t('settingsWidth')),
+                h(
+                  'select',
+                  {
+                    className: 'luc-set-in',
+                    value: prefs.width,
+                    onChange: (event) => setPref({ width: event.target.value }),
+                  },
+                  ...widthOptions.map(([value, label]) => h('option', { key: value, value }, label)),
+                ),
+              ),
+              h(
+                'div',
+                { className: 'luc-set-row' },
+                h('span', { className: 'luc-set-label' }, t('settingsIcons')),
+                h('input', {
+                  type: 'checkbox',
+                  checked: prefs.icons,
+                  onChange: (event) => setPref({ icons: event.target.checked }),
+                }),
+              ),
             ),
           ),
         )
@@ -1512,7 +2259,62 @@ window.__ModuleLoader__.load({
       }, 'let-user-choose: dictionaries')
 
       const t = ctx.locale.bind('let-user-choose')
-      const Dialog = createDialog(ctx, t)
+      const ui = createChoiceUi()
+
+      // 登记成会话的挂起交互：宿主要知道这个会话在等人回答（界面另用弹窗 + 小胶囊）
+      let publish = null
+      if (ctx.uiSession && typeof ctx.uiSession.registerPendingInteraction === 'function') {
+        try {
+          publish = ctx.uiSession.registerPendingInteraction(() => 1)
+        } catch {
+          publish = null
+        }
+      }
+
+      // 转录里的工具行：按模式给图标，和原生提问卡片同一排
+      const ChoiceRow = createChoiceRow(ui)
+      const toolviews = new Set()
+      const ensureToolview = (name) => {
+        const key = typeof name === 'string' && name !== '' ? name : 'let_user_choose'
+        if (toolviews.has(key)) return
+        toolviews.add(key)
+        ctx.slots.inject('tool.call.toolview', () =>
+          ctx.slots.register({ name: 'tool.call.toolview', key, locale: 'let-user-choose' }, ChoiceRow),
+        )
+      }
+      ensureToolview('let_user_choose')
+
+      const Dialog = createDialog(ctx, t, ui, publish, ensureToolview)
+      const SettingsPage = createSettingsPage(ctx, t)
+      // 标签可能在语言还没就绪时被投影一次，兜一个静态文案，避免出现空标签页
+      const settingsLabel = () => {
+        const text = t('settingsTab')
+        return typeof text === 'string' && text !== '' && text !== 'settingsTab' ? text : '选择题'
+      }
+      // 两个入口：设置里顶层的独立页（好找），以及 插件 分类里的一个标签页
+      ctx.slots.inject('settings.section', () =>
+        ctx.slots.register(
+          {
+            name: 'settings.section',
+            id: 'dsh-visual-option',
+            order: 65,
+            label: settingsLabel,
+          },
+          SettingsPage,
+        ),
+      )
+      ctx.slots.inject('settings.plugins.tab', () =>
+        ctx.slots.register(
+          {
+            name: 'settings.plugins.tab',
+            id: 'dsh-visual-option',
+            order: 70,
+            label: settingsLabel,
+          },
+          SettingsPage,
+        ),
+      )
+
       ctx.slots.inject('shell.overlay', () =>
         ctx.slots.register(
           {

@@ -10,6 +10,8 @@
     it registers the tool <code>let_user_choose</code>: the model can pass HTML text / links / local paths and ask the user to choose between rendered previews
   </p>
 
+  <p>v0.2.25 · selfcheck 44/44 · MIT</p>
+
   <p>
     <a href="../README.md">汉语</a> ·
     <a href="./README-CN-Traditional.md">汉语(漢語)</a> ·
@@ -119,9 +121,51 @@ Reuses the GUI theme tokens, mask, radii and focus ring, supports Esc, focus tra
 
 `fit / 768 / 390`, so the same page can be checked on desktop and phone widths
 
+### Prompt guidance
+
+The plugin adds a guidance paragraph to the system prompt: when a choice is needed, default to `let_user_choose` instead of `ask_user_question`, fall back to the native prompt only in special cases, and for anything that is hard to put into words (layout, color scheme, what an error looks like on screen, a data structure, a long code diff) attach an inline HTML source preview to each matching option instead of letting the user imagine it
+
+### Question row in the transcript
+
+That call is no longer a generic tool card in the conversation; it is one row on the same line as the native question: an icon on the left by mode, `mode: title` on the right
+
+| Mode | Icon | Text |
+| --- | --- | --- |
+| single | question mark in a circle | `Question: <title>` |
+| multi | two checkboxes and two lines | `Multi-select: <title>` |
+| confirm | a check inside a box | `Confirm: <title>` |
+| fill | an input box with two inner lines | `Fill in: <title>` |
+| test | two stacked cards | `Quiz: <title>` |
+
+While the request is still pending that row is clickable and reopens the dialog
+
+### Collapse and hold
+
+The `—` in the top right corner of the dialog collapses it into a small pill in the bottom right (icon + mode + title); the request stays pending, and without a result the model does not keep generating. The whole pill is clickable and returns to the dialog; the pill also carries `Cancel` to settle the request right away
+
+> The composer itself is not taken over: DSH's `conversation.composer` is a session-level chain slot that currently only accepts registrations from the built-in UI, a third-party plugin cannot register into it, so you can still type and send messages while the dialog is collapsed — the model is just stuck on that tool call and will not say more
+
+### Replace the native prompt (experimental)
+
+With `replaceAskUserQuestion: true` the plugin registers its tool under the built-in name `ask_user_question`, so every plugin that recognises a question **by tool name** (waiting bubble, notification sound, sidebar grouping, activity text and so on) fires as usual
+
+But there is a prerequisite: the built-in row has to give way first. Measured on `0.2.2-rc.3`, the `tool-ask-user` row sits in the **agent preset `plugins` list**, a profile patch cannot reach it by id (it reports `patch: entry "tool-ask-user" not found`), so the usual route is to **make a custom preset**, drop `tool-ask-user` and then turn this switch on; when the name is taken the plugin falls back to `let_user_choose` and says so in the log
+
+## Settings page
+
+Two entries in settings lead to the same page: the **Choice dialog** entry in the left navigation, and the Settings → Plugins → **Choice dialog** tab. Every feature can be clicked through on the spot:
+
+| Area | What it holds |
+| --- | --- |
+| Run a test | single / multi / confirm / fill / test buttons, each fires a real request in the session you have open (nobody waits for the result, it settles as soon as you answer) |
+| Host settings | `timeoutMs`, `maxInlineBytes`, `phpBinary`, apply as soon as you save and are written to `$DSH_HOME/dsh-visual-option.json`, so they survive a restart |
+| Interface | default preview width (`fit / 768 / 390`), whether mode icons show in the chat, kept in the browser |
+
+The host settings only override the same-named values in the patch, the patch stays the baseline; delete that json file to go back to the patch values
+
 ## Install
 
-Requires DSH `0.2.0-rc` or newer, Web profile
+Requires DSH `0.2.0-rc` or newer on the Web profile; best on `0.2.2-rc` and later, where the `agents` service judges the main session with `get` + `session.header.origin`
 
 > [!NOTE]
 > The project used to be named `dsh-let-user-choose`. When upgrading, rename the dependency key and the `dsh.profile.bundles` entry to `dsh-visual-option`. The tool name and API paths are unchanged
@@ -325,6 +369,8 @@ PHP execution has an 8 second timeout and a 2 MiB output cap, errors are not ech
 | `/api/let-user-choose/answer` | POST | submit, cancel or ask |
 | `/api/let-user-choose/hold` | POST | user interacted, drop the timeout |
 | `/api/let-user-choose/source` | GET | source preview body |
+| `/api/let-user-choose/settings` | GET / POST | read / write host settings from the settings page; POST requires `confirm: true` |
+| `/api/let-user-choose/selftest` | POST | settings page test button: fires one real request in that session |
 
 ## Security and limits
 

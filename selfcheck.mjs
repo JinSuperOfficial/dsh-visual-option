@@ -924,6 +924,126 @@ test('hub: validateAnswers rejects duplicates and unknown ids', () => {
   assert.throws(() => validateAnswers(spec, [{ id: 'q1', selected: ['A', 'A'] }]), /duplicate/)
 })
 
+/** 假 ctx：只提供 apply() 真正用到的那几个能力。 */
+function makePluginCtx({ sections, tools, taken = [] }) {
+  const disposers = []
+  const ctx = {
+    tools: {
+      register(tool) {
+        if (taken.includes(tool.name)) throw new Error(`tool "${tool.name}" is already registered`)
+        tools.push(tool)
+      },
+    },
+    connection: { fetch: { register() {} } },
+    agents: { get: () => undefined, roots: () => [] },
+    effect(fn) {
+      const disposer = fn()
+      if (typeof disposer === 'function') disposers.push(disposer)
+      return () => {}
+    },
+    inject(_deps, callback) {
+      callback({
+        effect: ctx.effect,
+        systemPrompt: {
+          section(section) {
+            sections.push(section)
+            return () => {}
+          },
+        },
+      })
+    },
+  }
+  return { ctx, disposers }
+}
+
+test('apply: registers the tool and one system-prompt guidance section', async () => {
+  const { apply, normalizeConfig } = await import('./index.js')
+  const sections = []
+  const tools = []
+  const { ctx, disposers } = makePluginCtx({ sections, tools })
+
+  apply(ctx, {})
+
+  assert.equal(tools.length, 1)
+  assert.equal(tools[0].name, 'let_user_choose')
+  assert.equal(sections.length, 1)
+  assert.equal(sections[0].name, 'plugin:dsh-visual-option')
+  assert.ok(Number.isFinite(sections[0].order))
+  assert.match(sections[0].text, /ask_user_question/)
+  assert.match(sections[0].text, /kind: 'html'/)
+  assert.match(sections[0].text, /let_user_choose/)
+  assert.equal(normalizeConfig({}).replaceAskUserQuestion, false)
+  assert.equal(normalizeConfig({ replaceAskUserQuestion: true }).replaceAskUserQuestion, true)
+  for (const dispose of disposers) dispose()
+})
+
+test('apply: replace mode falls back to let_user_choose when the built-in is still there', async () => {
+  const { apply } = await import('./index.js')
+  const sections = []
+  const tools = []
+  const { ctx, disposers } = makePluginCtx({ sections, tools, taken: ['ask_user_question'] })
+
+  apply(ctx, { replaceAskUserQuestion: true })
+
+  assert.deepEqual(
+    tools.map((tool) => tool.name),
+    ['let_user_choose'],
+  )
+  assert.equal(sections.length, 1)
+  for (const dispose of disposers) dispose()
+})
+
+test('apply: replace mode registers ask_user_question when the name is free', async () => {
+  const { apply } = await import('./index.js')
+  const sections = []
+  const tools = []
+  const { ctx, disposers } = makePluginCtx({ sections, tools })
+
+  apply(ctx, { replaceAskUserQuestion: true })
+
+  assert.deepEqual(
+    tools.map((tool) => tool.name),
+    ['ask_user_question'],
+  )
+  for (const dispose of disposers) dispose()
+})
+
+test('settings: every self-test fixture normalizes for its mode', async () => {
+  const { selftestArgs } = await import('./index.js')
+  const modes = ['single', 'multi', 'confirm', 'fill', 'quiz']
+  for (const mode of modes) {
+    const spec = normalizeArgs(selftestArgs(mode), { cwd: '/tmp', maxInlineBytes: 65536 })
+    assert.equal(spec.questions.length, 1, mode)
+    if (mode === 'quiz') {
+      assert.equal(spec.test, true)
+      assert.ok(spec.questions[0].options.some((option) => option.correct === true))
+    }
+    if (mode === 'confirm') assert.equal(spec.questions[0].mode, 'confirm')
+    if (mode === 'fill') assert.equal(spec.questions[0].mode, 'fill')
+    if (mode === 'multi') assert.equal(spec.questions[0].mode, 'multi')
+  }
+})
+
+test('settings: overrides round-trip through DSH_HOME', async () => {
+  const dir = await makeTemp('luc-settings-')
+  const previous = process.env.DSH_HOME
+  process.env.DSH_HOME = dir
+  try {
+    const mod = await import('./index.js')
+    assert.deepEqual(mod.loadOverrides(), {})
+    const { mkdir, writeFile } = await import('node:fs/promises')
+    await mkdir(dir, { recursive: true })
+    await writeFile(join(dir, 'dsh-visual-option.json'), JSON.stringify({ timeoutMs: 123000 }), 'utf8')
+    assert.equal(mod.loadOverrides().timeoutMs, 123000)
+    const merged = mod.normalizeConfig({ ...mod.loadOverrides() })
+    assert.equal(merged.timeoutMs, 123000)
+    assert.equal(merged.maxInlineBytes, 65536)
+  } finally {
+    if (previous === undefined) delete process.env.DSH_HOME
+    else process.env.DSH_HOME = previous
+  }
+})
+
 // ---------------------------------------------------------------------------
 
 let failed = 0
