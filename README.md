@@ -44,7 +44,9 @@
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=RNSiBdt5ahw">▶ 在 YouTube 观看</a> ·
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/RNSiBdt5ahw?si=vsB3vQvL5a9WIV0i" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
   <a href="https://www.bilibili.com/video/BV1e1sG64EUi">▶ 在哔哩哔哩观看</a>
+  <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=117613602538726&bvid=BV1e1sG64EUi&cid=43593698005&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
 </p>
 
 <details>
