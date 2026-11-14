@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>DSH Visual Option · glow</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #04060b; overflow: hidden }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100% }
+  .vignette { position: fixed; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.55) 100%); pointer-events: none }
+</style>
+</head>
+<body>
+  <canvas id="cv"></canvas>
+  <div class="vignette"></div>
+  <script>
+    const ipc = (() => { try { return require('electron').ipcRenderer } catch (e) { return null } })()
+    const cv = document.getElementById('cv')
+    const ctx = cv.getContext('2d')
+    const DURATION = 15
+    const PERIOD = 15
+
+    let W = innerWidth, H = innerHeight
+    function resize() {
+      const dpr = window.devicePixelRatio || 1
+      W = innerWidth; H = innerHeight
+      cv.width = W * dpr; cv.height = H * dpr
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+    addEventListener('resize', () => { resize(); build() })
+
+    // deterministic pseudo random
+    let seed = 20260101
+    function rand() {
+      seed = (seed * 1664525 + 1013904223) % 4294967296
+      return seed / 4294967296
+    }
+    const particles = Array.from({ length: 70 }, () => ({
+      r: rand(), a: rand() * Math.PI * 2, speed: 0.08 + rand() * 0.2,
+      size: 0.9 + rand() * 2.0, gold: rand() < 0.45, alpha: 0.25 + rand() * 0.5,
+    }))
+    const rings = [0.30, 0.44, 0.60].map((radius, i) => ({ radius, width: 1 + i * 0.6, speed: i % 2 ? -0.7 : 1, alpha: 0.18 - i * 0.04 }))
+
+    let bg = null, glow = null, logoImg = null
+
+    function makeGlow() {
+      const g = document.createElement('canvas')
+      const size = 1100
+      g.width = size; g.height = size
+      const c = g.getContext('2d')
+      const blue = c.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
+      blue.addColorStop(0, 'rgba(120,150,255,0.75)')
+      blue.addColorStop(0.35, 'rgba(90,120,240,0.30)')
+      blue.addColorStop(1, 'rgba(40,60,160,0)')
+      c.fillStyle = blue; c.fillRect(0, 0, size, size)
+      const gold = c.createRadialGradient(size / 2 + 60, size / 2 + 15, 0, size / 2 + 60, size / 2 + 15, size * 0.36)
+      gold.addColorStop(0, 'rgba(255,210,120,0.42)')
+      gold.addColorStop(1, 'rgba(255,180,60,0)')
+      c.fillStyle = gold; c.fillRect(0, 0, size, size)
+      return g
+    }
+
+    function build() {
+      bg = document.createElement('canvas')
+      bg.width = W; bg.height = H
+      const b = bg.getContext('2d')
+      const cx = W / 2, cy = H / 2
+      const base = b.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.72)
+      base.addColorStop(0, 'rgba(22,30,62,1)')
+      base.addColorStop(0.45, 'rgba(8,12,24,1)')
+      base.addColorStop(1, 'rgba(3,5,10,1)')
+      b.fillStyle = base; b.fillRect(0, 0, W, H)
+      glow = glow || makeGlow()
+    }
+
+    const t0 = performance.now()
+    let stopping = false
+    let started = false
+
+    function start() {
+      if (started) return
+      started = true
+      requestAnimationFrame(frame)
+    }
+
+    function frame(now) {
+      const t = ((now - t0) / 1000) % PERIOD
+      const cx = W / 2, cy = H / 2
+
+      ctx.drawImage(bg, 0, 0, W, H)
+
+      // breathing core glow from the pre-rendered sprite
+      const breath = 0.88 + 0.12 * Math.sin((t / 5) * Math.PI * 2)
+      const gs = Math.max(W, H) * 0.95 * breath
+      ctx.globalAlpha = 1
+      ctx.drawImage(glow, cx - gs / 2, cy - gs / 2, gs, gs)
+      const coreSize = 620 * breath
+      const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreSize)
+      core.addColorStop(0, 'rgba(180,200,255,0.22)')
+      core.addColorStop(0.45, 'rgba(120,150,255,0.10)')
+      core.addColorStop(1, 'rgba(0,0,0,0)')
+      ctx.fillStyle = core
+      ctx.fillRect(cx - coreSize, cy - coreSize, coreSize * 2, coreSize * 2)
+
+      // rings
+      for (const ring of rings) {
+        const radius = Math.min(W, H) * ring.radius
+        const angle = (t / PERIOD) * Math.PI * 2 * ring.speed
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle)
+        ctx.strokeStyle = `rgba(140,165,255,${ring.alpha})`
+        ctx.lineWidth = ring.width
+        ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI * 1.35); ctx.stroke()
+        ctx.beginPath(); ctx.arc(0, 0, radius, Math.PI * 1.45, Math.PI * 1.7); ctx.stroke()
+        ctx.restore()
+      }
+
+      // particles
+      for (const p of particles) {
+        const angle = p.a + (t / PERIOD) * Math.PI * 2 * p.speed
+        const dist = 170 + p.r * Math.min(W, H) * 0.47
+        const x = cx + Math.cos(angle) * dist
+        const y = cy + Math.sin(angle) * dist * 0.72
+        const tw = 0.55 + 0.45 * Math.sin((t / 3) * Math.PI * 2 + p.a * 3)
+        ctx.fillStyle = p.gold
+          ? `rgba(255,205,120,${p.alpha * tw})`
+          : `rgba(150,175,255,${p.alpha * tw})`
+        ctx.beginPath(); ctx.arc(x, y, p.size, 0, Math.PI * 2); ctx.fill()
+      }
+
+      // logo with breathing scale
+      const pulse = 0.5 + 0.5 * Math.sin((t / 5) * Math.PI * 2)
+      if (logoImg && logoImg.complete) {
+        const baseW = 620
+        const w = baseW * (1 + pulse * 0.025)
+        const h = w * (logoImg.naturalHeight / logoImg.naturalWidth)
+        ctx.drawImage(logoImg, cx - w / 2, cy - h / 2, w, h)
+      }
+
+      if (!stopping && now - t0 > DURATION * 1000) {
+        stopping = true
+        if (ipc) ipc.invoke('rec:stop')
+      }
+      requestAnimationFrame(frame)
+    }
+
+    const begin = () => {
+      try { resize(); build() } catch (error) { console.log('build failed: ' + error.message) }
+      if (ipc) ipc.invoke('rec:start').then(() => setTimeout(start, 60)).catch(start)
+      else start()
+    }
+
+    logoImg = new Image()
+    logoImg.onload = begin
+    logoImg.onerror = () => { console.log('logo failed'); begin() }
+    logoImg.src = '../logo.svg'
+  </script>
+</body>
+</html>

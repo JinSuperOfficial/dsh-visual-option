@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>dsh-visual-option · 验收演示</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body data-ds-dark-theme>
+  <div id="app">
+    <aside class="side">
+      <div class="side-top">
+        <div class="brand">
+          <img class="brand-logo" src="svg/deepseek-logo-text.svg" alt="deepseek">
+        </div>
+        <span class="icon-btn side-collapse">◧</span>
+      </div>
+
+      <div class="side-actions">
+        <button class="btn-new" type="button"><span>＋</span> 新会话</button>
+        <button class="btn-gen" type="button"><span>▦</span> 生图</button>
+      </div>
+
+      <nav class="side-nav">
+        <div class="nav-item"><span class="nav-ico">＋</span>新会话</div>
+        <div class="nav-item"><span class="nav-ico">◇</span>插件</div>
+      </nav>
+
+      <div class="side-section">
+        <span>工作区</span>
+        <span class="section-icons">⇥ ＋</span>
+      </div>
+
+      <div class="side-scroll">
+        <div class="ws">
+          <div class="ws-name"><i class="ws-dot"></i>let-use-choose</div>
+          <div class="session active"><i class="s-dot"></i>落地页方案对比</div>
+          <div class="session"><i class="s-dot"></i>插件上架前的自检清单</div>
+          <div class="session"><i class="s-dot"></i>生图工作台 · 门店海报</div>
+        </div>
+        <div class="ws">
+          <div class="ws-name"><i class="ws-dot"></i>网站</div>
+          <div class="session"><i class="s-dot"></i>hwk 发版记录</div>
+          <div class="session"><i class="s-dot"></i>作业显示与截图</div>
+          <div class="session"><i class="s-dot"></i>把下载目录的 zip 解包</div>
+        </div>
+        <div class="ws">
+          <div class="ws-name"><i class="ws-dot"></i>sodium.ai</div>
+          <div class="session"><i class="s-dot"></i>缩减系统提示词</div>
+        </div>
+      </div>
+
+      <div class="side-foot">
+        <span class="avatar">🐳</span>
+        <span class="side-user">JinSuper</span>
+        <span class="chev">⌄</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="tb-left">
+          <span class="tb-title">落地页方案对比</span>
+          <span class="tb-chip"><i>✳</i>创造模式</span>
+          <span class="tb-chip"><i class="spin">◌</i>1 个后台任务运行中<i>⌄</i></span>
+        </div>
+        <div class="tb-right">
+          <div class="tabs"><span class="tab active">对话</span><span class="tab">轨迹</span></div>
+          <span class="icon-btn">⤢</span>
+          <span class="icon-btn">⋯</span>
+          <span class="icon-btn">▤</span>
+          <span class="icon-btn">▥</span>
+        </div>
+      </header>
+
+      <div class="thread">
+        <div class="msg msg-user">
+          <div class="bubble">两个落地页方向都做出来了，帮我挑一个？</div>
+        </div>
+        <div class="msg msg-bot">
+          <div class="who"><img class="who-dot" src="svg/deepseek-logo.svg" alt="">Assistant</div>
+          <div class="msg-text">可以，我把两套页面直接摆进选择框里，你点一下就行。</div>
+
+          <div class="tool" id="tool">
+            <div class="tool-head">
+              <span class="tool-ico">◈</span>
+              <span class="tool-name">let_user_choose</span>
+              <span class="tool-state" id="tool-state">等待用户选择…</span>
+            </div>
+            <div class="tool-body" id="tool-body">
+              <div class="tool-line">请选择落地页方案 · 2 个选项 · 可加备注</div>
+              <div class="tool-args">{ "mode": "single", "timeoutSeconds": 600 }</div>
+            </div>
+            <div class="tool-result" id="tool-result" hidden><pre id="tool-result-pre"></pre></div>
+          </div>
+
+          <div class="msg-text muted" id="bot-tail" hidden>收到，就按方案 B 往下做。</div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <div class="composer-box"><span class="ph">Type <b>/</b> for commands</span></div>
+        <div class="composer-meta">
+          <span class="cm-left">Full access <i>⌄</i> <b>＋</b></span>
+          <span class="cm-right">DeepSeek-V41-Flash <em>High</em> <i>◔ 16%</i></span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="overlay-root"></div>
+
+  <img id="pet" class="pet" src="img/pet.png" alt="">
+
+
+  <div id="scene-ask" class="scene" hidden>
+    <div class="au-wrap">
+      <div class="au-panel">
+        <div class="au-kicker">测验模式</div>
+        <div class="au-q">这份数据要不要公开？</div>
+        <div class="au-rows">
+          <div class="au-row"><span class="au-num">1</span><span class="au-label">公开，所有人可见</span></div>
+          <div class="au-row"><span class="au-num">2</span><span class="au-label">仅团队可见</span></div>
+          <div class="au-row"><span class="au-num">3</span><span class="au-label">先不公开</span></div>
+        </div>
+        <div class="au-input">✎ 输入你的答案</div>
+        <div class="au-foot"><span class="au-prog">‹ 1 / 2 ›</span><span class="au-spacer"></span><span class="au-skip">跳过</span><span class="au-next">下一题</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="scene-split" class="scene" hidden>
+    <div class="sp-half sp-left">
+      <div class="sp-label">ask-user-question</div>
+      <div class="au-panel sp-small">
+        <div class="au-kicker">测验模式</div>
+        <div class="au-q">这份数据要不要公开？</div>
+        <div class="au-rows">
+          <div class="au-row"><span class="au-num">1</span><span class="au-label">公开，所有人可见</span></div>
+          <div class="au-row"><span class="au-num">2</span><span class="au-label">仅团队可见</span></div>
+          <div class="au-row"><span class="au-num">3</span><span class="au-label">先不公开</span></div>
+        </div>
+        <div class="au-foot"><span class="au-prog">‹ 1 / 2 ›</span><span class="au-spacer"></span><span class="au-skip">跳过</span><span class="au-next">下一题</span></div>
+      </div>
+    </div>
+    <svg class="sp-bolt" viewBox="0 0 120 900" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M60 0 L38 210 L74 250 L30 470 L70 520 L26 740 L58 800 L44 900" fill="none" stroke="#a8c3ff" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M60 0 L38 210 L74 250 L30 470 L70 520 L26 740 L58 800 L44 900" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    </svg>
+    <div class="sp-half sp-right">
+      <div class="sp-label sp-label-right">visual-option</div>
+      <img class="sp-shot" src="../assets/ref-single.png" alt="visual option dialog">
+    </div>
+  </div>
+
+  <div id="scene-zoom" class="scene" hidden>
+    <div class="au-wrap zoom-wrap">
+      <div class="au-panel">
+        <div class="au-kicker">测验模式</div>
+        <div class="au-q">这份数据要不要公开？</div>
+        <div class="au-rows">
+          <div class="au-row"><span class="au-num">1</span><span class="au-label">公开，所有人可见</span></div>
+          <div class="au-row"><span class="au-num">2</span><span class="au-label">仅团队可见</span></div>
+          <div class="au-row"><span class="au-num">3</span><span class="au-label">先不公开</span></div>
+        </div>
+        <div class="au-foot"><span class="au-prog">‹ 1 / 2 ›</span><span class="au-spacer"></span><span class="au-skip">跳过</span><span class="au-next">下一题</span></div>
+      </div>
+      <div class="zoom-tag">纯文本</div>
+    </div>
+  </div>
+
+  <div id="scene-disaster" class="scene" hidden>
+    <div class="dis-page">
+      <div class="dis-nav">MY AWESOME SITE</div>
+      <div class="dis-hero">WELCOME!!! <span class="dis-blink">NEW</span></div>
+      <div class="dis-grad"></div>
+      <div class="dis-box dis-box-a">按钮</div>
+      <div class="dis-box dis-box-b">另一个按钮</div>
+      <div class="dis-text">这是一段挤在一起的文字这是一段挤在一起的文字这是一段挤在一起的文字</div>
+      <div class="dis-img"></div>
+    </div>
+  </div>
+
+  <div id="scene-pretty" class="scene" hidden>
+    <div class="pretty-page">
+      <div class="pretty-nav"><span class="pretty-logo">Lumen</span><span class="pretty-links">作品 · 方法 · 关于</span><span class="pretty-cta">预约咨询</span></div>
+      <div class="pretty-body">
+        <div class="pretty-copy">
+          <h1>把每一页<br>写成一句<em>记得住</em>的话</h1>
+          <p>品牌叙事、内容策划与视觉落地，从一个句子开始</p>
+          <div class="pretty-btns"><span class="pretty-b1">看案例</span><span class="pretty-b2">下载手册</span></div>
+        </div>
+        <div class="pretty-art"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="scene-burst" class="scene" hidden>
+    <div class="burst-glow"></div>
+    <img class="burst-logo" src="../logo.svg" alt="dsh visual option">
+  </div>
+
+  <div id="scene-github" class="scene" hidden>
+    <div class="gh-card">
+      <img class="gh-qr" src="img/qr.png" alt="GitHub QR">
+      <div class="gh-text">
+        <div class="gh-kicker">OPEN SOURCE</div>
+        <div class="gh-repo">github.com/JinSuperOfficial/dsh-visual-option</div>
+        <div class="gh-hint">搜索 dsh-visual-option 即可安装 · 求 Star</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="caption" class="caption" hidden>
+    <span class="cap-dot"></span>
+    <span id="caption-text"></span>
+  </div>
+
+  <div id="titlecard" class="titlecard" hidden>
+    <div class="tc-inner">
+      <div class="tc-logo">
+        <svg viewBox="0 0 64 64" width="72" height="72" aria-hidden="true">
+          <rect x="4" y="4" width="56" height="56" rx="14" fill="#3b6cf6"/>
+          <rect x="13" y="15" width="38" height="15" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+          <rect x="13" y="34" width="38" height="15" rx="5" fill="#ffffff" fill-opacity="0.55"/>
+          <circle cx="20" cy="22.5" r="3.2" fill="#3b6cf6"/>
+          <circle cx="20" cy="41.5" r="3.2" fill="#ffffff" fill-opacity="0.9"/>
+          <path d="M36 22.5h9" stroke="#3b6cf6" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M36 41.5h9" stroke="#3b6cf6" stroke-width="2.4" stroke-linecap="round" opacity="0.65"/>
+        </svg>
+      </div>
+      <h1 class="tc-title">dsh-visual-option</h1>
+      <p class="tc-sub">让模型在关键处停下来，把选择权交还给使用者</p>
+      <div class="tc-meta"><span>DSH Web 插件</span><span class="tc-sep">·</span><span>v0.2.14</span><span class="tc-sep">·</span><span>验收演示</span></div>
+    </div>
+  </div>
+
+  <div id="tiles" class="tiles" hidden>
+    <div class="tiles-inner">
+      <h2 class="tiles-title">能力一览</h2>
+      <div class="tiles-grid">
+        <div class="tile"><div class="tile-ico">◇</div><div class="tile-name">四种模式 + 测验</div><div class="tile-desc">单选 / 多选 / 填空 / 确认；测验只给对错与得分</div></div>
+        <div class="tile"><div class="tile-ico">▤</div><div class="tile-name">三种预览</div><div class="tile-desc">远程 URL、本地路径、内联 HTML 直接嵌进选项</div></div>
+        <div class="tile"><div class="tile-ico">✎</div><div class="tile-name">备注 · 提示 · 其他</div><div class="tile-desc">选项备注、按需展开的提示、自带「其他」输入</div></div>
+        <div class="tile"><div class="tile-ico">◷</div><div class="tile-name">不限时等待</div><div class="tile-desc">鼠标一动即取消倒计时，只在安全边界兜底</div></div>
+        <div class="tile"><div class="tile-ico">▣</div><div class="tile-name">原生弹窗</div><div class="tile-desc">沿用 GUI 主题变量，焦点环、Esc、遮罩都在</div></div>
+        <div class="tile"><div class="tile-ico">◈</div><div class="tile-name">提问 · 跳过</div><div class="tile-desc">随时把问题打回主对话；任一题都能跳过</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="outro" class="outro" hidden>
+    <div class="outro-inner">
+      <div class="tc-logo small">
+        <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">
+          <rect x="4" y="4" width="56" height="56" rx="14" fill="#3b6cf6"/>
+          <rect x="13" y="15" width="38" height="15" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+          <rect x="13" y="34" width="38" height="15" rx="5" fill="#ffffff" fill-opacity="0.55"/>
+          <circle cx="20" cy="22.5" r="3.2" fill="#3b6cf6"/>
+          <circle cx="20" cy="41.5" r="3.2" fill="#ffffff" fill-opacity="0.9"/>
+          <path d="M36 22.5h9" stroke="#3b6cf6" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M36 41.5h9" stroke="#3b6cf6" stroke-width="2.4" stroke-linecap="round" opacity="0.65"/>
+        </svg>
+      </div>
+      <div class="outro-name">dsh-visual-option</div>
+      <div class="outro-tag">选得明白，等得从容</div>
+      <div class="outro-meta">v0.2.14 · 自检 39/39 · 已在 GUI 中实机验收</div>
+    </div>
+  </div>
+
+  <div id="cursor" class="cursor">
+    <svg viewBox="0 0 20 20" width="22" height="22" aria-hidden="true">
+      <path d="M3 2 L3 16.4 L7.1 12.7 L9.6 17.8 L12.1 16.6 L9.7 11.7 L15.2 11.3 Z" fill="#ffffff" stroke="#0b0c0f" stroke-width="1.3" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div id="ripple" class="ripple"></div>
+
+  <script src="node_modules/react/umd/react.production.min.js"></script>
+  <script src="node_modules/react-dom/umd/react-dom.production.min.js"></script>
+  <script src="assets/harness.js"></script>
+  <script src="../client.js"></script>
+  <script>window.__boot()</script>
+</body>
+</html>

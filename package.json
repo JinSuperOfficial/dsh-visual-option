@@ -1,0 +1,65 @@
+{
+  "name": "dsh-visual-option",
+  "version": "0.2.15",
+  "private": false,
+  "description": "DSH Web 插件：把多个链接 / 本地页面 / 内联 HTML / PHP 变体渲染成可预览的选项，用户点选并备注后，阻塞式工具 let_user_choose 返回结构化答案",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "lib",
+    "test",
+    "selfcheck.mjs",
+    "README.md",
+    "icon.svg",
+    "logo.svg",
+    "readme"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "icon": "./icon.svg",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-session"
+      ]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JinSuperOfficial/dsh-visual-option.git"
+  },
+  "homepage": "https://github.com/JinSuperOfficial/dsh-visual-option",
+  "bugs": {
+    "url": "https://github.com/JinSuperOfficial/dsh-visual-option/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "ui",
+    "choice",
+    "preview",
+    "approval"
+  ],
+  "author": "JinSuperOfficial",
+  "publishConfig": {
+    "access": "public"
+  }
+}

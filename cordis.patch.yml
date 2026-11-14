@@ -1,0 +1,20 @@
+# ============================================================================
+# dsh-visual-option —— 插件自带的挂载声明
+# ============================================================================
+# 安装后由 profile 的 dsh.profile.bundles 列出本包即生效（plugin_manager
+# install_bundle 会负责写 profile，不要手改 profile 的 package.json）。
+#
+# 配置项：
+#   timeoutMs      等待用户作答的上限（毫秒），默认 10 分钟，夹 5s–1h
+#   maxInlineBytes 单个内联 html/php 源码上限，默认 64 KiB
+#   phpBinary      '' = 不执行 PHP（只显示源码）；'auto' = 探测 PATH 上的 php；
+#                  其他值 = 直接当可执行文件路径
+# ============================================================================
+
+- insert:
+    - id: visual-option
+      name: dsh-visual-option
+      config:
+        timeoutMs: 600000
+        maxInlineBytes: 65536
+        phpBinary: ""

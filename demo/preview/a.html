@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --ink: #2c2019; --muted: #7c6555; --accent: #c25a37; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 320px; overflow: hidden; }
+  body {
+    background: #f8f2e9;
+    color: var(--ink);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  }
+  .wrap { display: flex; flex-direction: column; height: 100%; padding: 18px 22px 16px; }
+  nav { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--muted); }
+  .logo { font-size: 15px; font-weight: 700; letter-spacing: .04em; color: var(--ink); }
+  .logo span { color: var(--accent); }
+  nav .links { display: flex; gap: 14px; margin-left: 10px; }
+  .cta {
+    margin-left: auto; background: var(--ink); color: #fdf8f1;
+    padding: 6px 12px; border-radius: 99px; font-size: 11px; letter-spacing: .02em;
+  }
+  .hero { display: flex; gap: 20px; margin-top: 22px; flex: 1; min-height: 0; }
+  .copy { flex: 1; min-width: 0; }
+  h1 { font-family: Georgia, "Songti SC", serif; font-size: 30px; line-height: 1.28; letter-spacing: -.01em; }
+  h1 em { font-style: normal; color: var(--accent); }
+  p { margin-top: 10px; font-size: 12px; line-height: 1.75; color: var(--muted); }
+  .btns { display: flex; gap: 10px; margin-top: 16px; }
+  .b1 { background: var(--accent); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 12px; }
+  .b2 { color: var(--ink); padding: 8px 14px; border-radius: 8px; font-size: 12px; border: 1px solid #dccab8; }
+  .art {
+    width: 196px; border-radius: 14px; position: relative; overflow: hidden; flex: none;
+    background: linear-gradient(160deg, #f3d3b3 0%, #e29a6c 46%, #c25a37 100%);
+    box-shadow: 0 10px 26px rgba(160, 80, 45, .22);
+  }
+  .art::before {
+    content: ""; position: absolute; width: 140px; height: 140px; border-radius: 50%;
+    right: -44px; top: -42px; background: rgba(255, 255, 255, .30);
+  }
+  .art::after {
+    content: ""; position: absolute; left: 18px; bottom: 18px; width: 90px; height: 52px;
+    border-radius: 10px; background: rgba(255, 255, 255, .26);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .35) inset;
+  }
+  .tag {
+    position: absolute; left: 16px; top: 14px; font-size: 10px; letter-spacing: .12em;
+    color: #fff; opacity: .92; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <div class="logo">Lumen<span>.</span></div>
+      <div class="links"><span>作品</span><span>方法</span><span>关于</span></div>
+      <div class="cta">预约咨询</div>
+    </nav>
+    <div class="hero">
+      <div class="copy">
+        <h1>把每一页，写成<br>一句<em>记得住</em>的话</h1>
+        <p>品牌叙事、内容策划与视觉落地，从一个句子开始。</p>
+        <div class="btns"><div class="b1">看案例</div><div class="b2">下载手册</div></div>
+      </div>
+      <div class="art"><div class="tag">Editorial 2026</div></div>
+    </div>
+  </div>
+</body>
+</html>

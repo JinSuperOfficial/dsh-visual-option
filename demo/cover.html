@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>DSH Visual Option · cover</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #04060b; overflow: hidden }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100% }
+  .bg { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover }
+  .shade { position: fixed; inset: 0; background: radial-gradient(ellipse at center, rgba(4,6,12,.15) 0%, rgba(4,6,12,.45) 62%, rgba(4,6,12,.78) 100%) }
+  .vignette { position: fixed; inset: 0; background: radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,.7) 100%) }
+  .wrap { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 0 60px }
+  .wrap::before { content: ''; position: absolute; width: 1500px; height: 700px; border-radius: 50%; background: radial-gradient(ellipse, rgba(3,5,10,.48) 0%, rgba(3,5,10,.22) 52%, rgba(3,5,10,0) 78%); filter: blur(30px) }
+  .logo { width: 1160px; position: relative; filter: drop-shadow(0 0 40px rgba(120,150,255,.5)) drop-shadow(0 0 80px rgba(255,200,90,.28)) }
+  .kicker { font-size: 24px; letter-spacing: .35em; color: #8fa3ff; text-transform: uppercase; text-shadow: 0 0 24px rgba(120,150,255,.6) }
+  .title {
+    font-size: 196px; line-height: 1.02; font-weight: 800; letter-spacing: .01em; text-align: center;
+    filter: drop-shadow(0 12px 48px rgba(90,120,255,.45));
+    white-space: nowrap;
+  }
+  .title .w { color: #ffffff; -webkit-text-fill-color: #ffffff; text-shadow: 0 0 60px rgba(200,220,255,.35) }
+  .title em { font-style: normal; color: #ffd479; -webkit-text-fill-color: #ffd479; text-shadow: 0 0 50px rgba(255,200,90,.55) }
+  .sub { font-size: 32px; color: #9aa4bd; letter-spacing: .04em }
+  .sub b { color: #e8ecf8; font-weight: 600 }
+</style>
+</head>
+<body>
+  <img class="bg" src="img/bg-cover.jpg" alt="">
+  <div class="shade"></div>
+  <canvas id="cv" hidden></canvas>
+  <div class="vignette"></div>
+  <div class="wrap">
+    <img class="logo" src="../logo.svg" alt="DSH Visual Option">
+  </div>
+  <script>
+    const cv = document.getElementById('cv')
+    const ctx = cv.getContext('2d')
+    let W = innerWidth, H = innerHeight
+
+    function resize() {
+      const dpr = devicePixelRatio || 1
+      W = innerWidth; H = innerHeight
+      cv.width = W * dpr; cv.height = H * dpr
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+
+    let seed = 20260101
+    const rand = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296 }
+    const particles = Array.from({ length: 70 }, () => ({ r: rand(), a: rand() * Math.PI * 2, size: 1 + rand() * 2.4, gold: rand() < 0.45, alpha: 0.3 + rand() * 0.5 }))
+    const rings = [0.30, 0.44, 0.60].map((radius, i) => ({ radius, width: 1 + i * 0.6, speed: i % 2 ? -0.7 : 1, alpha: 0.2 - i * 0.045 }))
+
+    function glowSprite() {
+      const g = document.createElement('canvas'); const s = 1200
+      g.width = s; g.height = s
+      const c = g.getContext('2d')
+      const blue = c.createRadialGradient(s/2, s/2, 0, s/2, s/2, s/2)
+      blue.addColorStop(0, 'rgba(120,150,255,0.72)'); blue.addColorStop(0.34, 'rgba(90,120,240,0.28)'); blue.addColorStop(1, 'rgba(40,60,160,0)')
+      c.fillStyle = blue; c.fillRect(0, 0, s, s)
+      const gold = c.createRadialGradient(s/2+70, s/2+20, 0, s/2+70, s/2+20, s*0.36)
+      gold.addColorStop(0, 'rgba(255,210,120,0.40)'); gold.addColorStop(1, 'rgba(255,180,60,0)')
+      c.fillStyle = gold; c.fillRect(0, 0, s, s)
+      return g
+    }
+
+    function draw() {
+      const t = 7 // fixed phase
+      const cx = W/2, cy = H/2
+      const base = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W,H)*0.72)
+      base.addColorStop(0, 'rgba(20,27,56,1)'); base.addColorStop(0.45, 'rgba(7,11,22,1)'); base.addColorStop(1, 'rgba(3,5,10,1)')
+      ctx.fillStyle = base; ctx.fillRect(0, 0, W, H)
+      const g = glowSprite()
+      const gs = Math.max(W,H) * 0.92
+      ctx.drawImage(g, cx - gs/2, cy - gs/2, gs, gs)
+      for (const ring of rings) {
+        const radius = Math.min(W,H) * ring.radius
+        const angle = (t/15) * Math.PI * 2 * ring.speed
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle)
+        ctx.strokeStyle = `rgba(140,165,255,${ring.alpha})`; ctx.lineWidth = ring.width
+        ctx.beginPath(); ctx.arc(0,0,radius,0,Math.PI*1.35); ctx.stroke()
+        ctx.beginPath(); ctx.arc(0,0,radius,Math.PI*1.45,Math.PI*1.7); ctx.stroke()
+        ctx.restore()
+      }
+      for (const p of particles) {
+        const angle = p.a + (t/15) * Math.PI * 2 * 0.15
+        const dist = 170 + p.r * Math.min(W,H) * 0.47
+        ctx.fillStyle = p.gold ? `rgba(255,205,120,${p.alpha*0.9})` : `rgba(150,175,255,${p.alpha*0.9})`
+        ctx.beginPath(); ctx.arc(cx + Math.cos(angle)*dist, cy + Math.sin(angle)*dist*0.72, p.size, 0, Math.PI*2); ctx.fill()
+      }
+    }
+
+    // background image is used instead of the canvas
+    // resize(); draw()
+  </script>
+</body>
+</html>

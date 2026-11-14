@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 320px; overflow: hidden; }
+  body {
+    background: radial-gradient(520px 260px at 82% 0%, rgba(64, 120, 255, .30), transparent 62%), #0b1020;
+    color: #e7ecfa;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  }
+  .wrap { display: flex; flex-direction: column; height: 100%; padding: 18px 22px 16px; }
+  nav { display: flex; align-items: center; gap: 16px; font-size: 12px; color: #8a94b0; }
+  .logo { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: .04em; }
+  .logo i { color: #5b8cff; font-style: normal; }
+  nav .links { display: flex; gap: 14px; margin-left: 10px; }
+  .pill {
+    margin-left: auto; border: 1px solid rgba(255, 255, 255, .18); color: #cdd6ee;
+    padding: 5px 11px; border-radius: 99px; font-size: 11px;
+  }
+  h1 { margin-top: 20px; font-size: 27px; line-height: 1.3; letter-spacing: -.01em; }
+  h1 b { color: #6f9bff; font-weight: 600; }
+  p { margin-top: 8px; font-size: 12px; line-height: 1.7; color: #8a94b0; }
+  .stats { display: flex; gap: 10px; margin-top: 18px; }
+  .stat {
+    flex: 1; padding: 10px 12px; border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, .10);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02));
+  }
+  .stat small { font-size: 10px; color: #8a94b0; letter-spacing: .04em; }
+  .stat strong { display: block; margin-top: 4px; font-size: 19px; font-weight: 600; color: #f2f5ff; }
+  .stat em { font-style: normal; font-size: 11px; color: #4ede8a; margin-left: 5px; }
+  .strip { display: flex; gap: 10px; margin-top: 14px; align-items: flex-end; height: 52px; }
+  .bar { flex: 1; border-radius: 4px 4px 2px 2px; background: linear-gradient(180deg, #5b8cff, rgba(91, 140, 255, .25)); }
+  .bar.dim { background: linear-gradient(180deg, rgba(139, 168, 255, .55), rgba(139, 168, 255, .10)); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <div class="logo">Pulse<i>.</i></div>
+      <div class="links"><span>总览</span><span>漏斗</span><span>用户</span></div>
+      <div class="pill">实时</div>
+    </nav>
+    <h1>看清每个指标，<b>去了哪里</b></h1>
+    <p>把转化、留存与渠道放进同一张图上，问题自然浮出来。</p>
+    <div class="stats">
+      <div class="stat"><small>今日转化</small><strong>1,284<em>+12%</em></strong></div>
+      <div class="stat"><small>次日留存</small><strong>41.6%</strong></div>
+      <div class="stat"><small>客单价</small><strong>¥ 268</strong></div>
+    </div>
+    <div class="strip">
+      <div class="bar" style="height:28%"></div>
+      <div class="bar" style="height:42%"></div>
+      <div class="bar" style="height:36%"></div>
+      <div class="bar" style="height:58%"></div>
+      <div class="bar" style="height:72%"></div>
+      <div class="bar" style="height:64%"></div>
+      <div class="bar" style="height:88%"></div>
+      <div class="bar dim" style="height:76%"></div>
+      <div class="bar" style="height:94%"></div>
+    </div>
+  </div>
+</body>
+</html>

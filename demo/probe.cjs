@@ -1,0 +1,13 @@
+const { app, BrowserWindow } = require('electron')
+const fs = require('fs')
+app.disableHardwareAcceleration()
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+app.whenReady().then(async () => {
+  const win = new BrowserWindow({ width: 1600, height: 900, show: false, webPreferences: { offscreen: true, sandbox: false, contextIsolation: false, nodeIntegration: false } })
+  win.webContents.on('console-message', (_e, _l, msg) => { if (String(msg).includes('PROBE')) console.log('>>>', msg) })
+  await win.loadURL('http://127.0.0.1:4610/demo/index.html?probe=1')
+  await sleep(4500)
+  const img = await win.webContents.capturePage()
+  fs.writeFileSync('/tmp/probe.png', img.toPNG())
+  app.quit()
+})

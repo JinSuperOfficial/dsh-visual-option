@@ -1,0 +1,7 @@
+node_modules/
+demo/node_modules/
+demo/out/frames/
+demo/out/list.txt
+demo/out/check-*.png
+*.log
+demo/audio/
